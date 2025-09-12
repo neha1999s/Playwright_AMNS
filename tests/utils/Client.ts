@@ -1,7 +1,6 @@
 
 import { validateAndLog } from "./common";
 import { test } from "../setupBlocks/global.setup";
-import { ACTIVE_BACKEND, USERS, TEST_TIMEOUT } from "../setupBlocks/constant";
 import { fetch_prs , eventCreationAPI , vendorBidAPI , submissionTimeExpireAPI} from "./FlowCover_API";
 
 
@@ -49,8 +48,8 @@ const pr_tech_auction = async ({ page  , eventCreation_detail  }) => {
   for (let i = 0; i < buttons.length; i++) {
     // Re-query the buttons to get fresh references
     await page.getByRole("button", { name: "icon: plus Add Evaluator" }).first().click();
+    await page.waitForTimeout(1000);
     await page.getByRole("menuitem", { name: eventCreation_detail.evaluator }).click();
-    // await page.getByRole('row', { name: '5 icon: delete' }).getByRole('cell').nth(4).click(); 
     await page.waitForTimeout(1000);
   }
  console.log("Evaluators added");
@@ -66,8 +65,13 @@ const pr_tech_auction = async ({ page  , eventCreation_detail  }) => {
   // Vendor search
  await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click();
   //  for (const company of eventCreation_detail.search_vendor) {
-    await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
-    await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
+ await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ await page.waitForTimeout(2000);
+  if(!(await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).isVisible)){ 
+  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').clear();
+  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ }
+ await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
   // }
  await page.getByRole('button', { name: 'Publish' }).click();
  await page.getByRole('button', { name: 'Edit Schedule' }).click();
@@ -86,10 +90,9 @@ const pr_tech_auction = async ({ page  , eventCreation_detail  }) => {
 await page.getByRole('button', { name: 'Save Schedule' }).click();
 await page.getByRole('button', { name: 'Publish' }).click(); 
 await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
-await page.waitForTimeout(3000);
+await page.waitForTimeout(4000);
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
-    // getByText('Please fill all the required')
     smessage: "Project created successfully with title: " + title,
     fmessage:  "Project creation failed" + title
   })
@@ -109,6 +112,7 @@ const qa_event_vendorwise = async ({ page  , eventCreation_detail}) => {
   for (let i = 0; i < buttons.length; i++) {
     // Re-query the buttons to get fresh references
     await page.getByRole("button", { name: "icon: plus Add Evaluator" }).first().click();
+    await page.waitForTimeout(1000);
     await page.getByRole("menuitem", { name: eventCreation_detail.evaluator }).click();
     await page.waitForTimeout(1000);
   }
@@ -120,10 +124,13 @@ const qa_event_vendorwise = async ({ page  , eventCreation_detail}) => {
  console.log("RFQ Template selected");
   // Vendor search
  await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click();
-  //  for (const company of ["312", "309"]) {
-    await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
-    await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
-  // }
+ await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ await page.waitForTimeout(2000);
+ if(!(await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).isVisible)){ 
+  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').clear();
+  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ }
+ await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
  await page.getByRole('button', { name: 'Publish' }).click();
  await page.getByRole('button', { name: 'Edit Schedule' }).click();
 // tech & rfq edit time
@@ -165,9 +172,8 @@ const qa_event_lineitem = async ({ page , eventCreation_detail}) => {
   for (let i = 0; i < buttons.length; i++) {
     // Re-query the buttons to get fresh references
     await page.getByRole("button", { name: "icon: plus Add Evaluator" }).first().click();
+    await page.waitForTimeout(1000);
     await page.getByRole("menuitem", { name: eventCreation_detail.evaluator }).click();
-    // await page.locator('td[data-celltype="delete"][data-cell-error="false"] i[aria-label="icon: delete"]').nth(4).click();
-    // await page.getByRole('row', { name: '5 icon: delete' }).getByRole('cell').nth(4).click();
     await page.waitForTimeout(1000);
   }
  console.log("Evaluators added");
@@ -179,10 +185,13 @@ const qa_event_lineitem = async ({ page , eventCreation_detail}) => {
 
   // Vendor search
  await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click();
-  //  for (const company of ["312", "309"]) {
-    await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
-    await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
-  // }
+ await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ await page.waitForTimeout(2000);
+ if(!(await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).isVisible)){ 
+  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').clear();
+  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ }
+ await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click() 
  await page.getByRole('button', { name: 'Publish' }).click();
  await page.getByRole('button', { name: 'Edit Schedule' }).click();
 // tech & rfq edit time
@@ -224,9 +233,9 @@ const qa_event_type_Auction = async ({ page  , eventCreation_detail}) => {
   for (let i = 0; i < buttons.length; i++) {
     // Re-query the buttons to get fresh references
     await page.getByRole("button", { name: "icon: plus Add Evaluator" }).first().click();
+    await page.waitForTimeout(3000);
     await page.getByRole("menuitem", { name: eventCreation_detail.evaluator }).click();
-    // await page.getByRole('row', { name: '5 icon: delete' }).getByRole('cell').nth(4).click();
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(3000);
   }
  console.log("Evaluators added");
  
@@ -239,11 +248,14 @@ const qa_event_type_Auction = async ({ page  , eventCreation_detail}) => {
  await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template, exact: true }).click();
  await page.getByRole('button', { name: 'Yes' }).click();
   // Vendor search
- await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click();
-  //  for (const company of ["312", "309"]) {
-    await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
-    await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
-  // }
+ await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click(); 
+ await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ await page.waitForTimeout(4000);
+ if(!(await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).isVisible)){ 
+  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').clear();
+  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ }
+ await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
  await page.getByRole('button', { name: 'Publish' }).click();
  await page.getByRole('button', { name: 'Edit Schedule' }).click();
 // tech & rfq edit time
@@ -284,8 +296,9 @@ const publish_event_with_blank_title = async ({ page , eventCreation_detail }) =
   for (let i = 0; i < buttons.length; i++) {
     // Re-query the buttons to get fresh references
     await page.getByRole("button", { name: "icon: plus Add Evaluator" }).first().click();
+    await page.waitForTimeout(3000);
     await page.getByRole("menuitem", { name: eventCreation_detail.evaluator }).click();
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(3000);
   }
  console.log("Evaluators added");
  
@@ -293,33 +306,22 @@ const publish_event_with_blank_title = async ({ page , eventCreation_detail }) =
  await page.getByRole('button', { name: 'Formula Template' }).click();
  await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template, exact: true }).click();
  await page.getByRole('button', { name: 'Yes' }).click();
+ await page.waitForTimeout(2000);
 
   // Vendor search
  await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click();
-  //  for (const company of ["312", "309"]) {
-    await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
-    await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
-  // }
- await page.getByRole('button', { name: 'Publish' }).click();
- await page.getByRole('button', { name: 'Edit Schedule' }).click();
-// tech & rfq edit time
- for (let i = 0; i < 2; i++) {
-  if (i === 0) {
-    await page.getByText('30 Mins', { exact: true }).first().click();
-  } else {
-    await page.getByText('Mins').nth(2).click();
-  }
-  await page.getByRole('menuitem', { name: 'Custom duration' }).click();
-  await page.getByRole('spinbutton', { name: '60' }).click();
-  await page.getByRole('spinbutton', { name: '60' }).fill(eventCreation_detail.edit_schedule);
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
- await page.getByRole('button', { name: 'Save Schedule' }).click();
- await page.getByRole('button', { name: 'Publish' }).click();
+ await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ await page.waitForTimeout(3000);
+ if(!(await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).isVisible)){ 
+  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').clear();
+  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ }
+ await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
+ await page.waitForTimeout(3000);
  await page.getByRole('textbox', { name: 'Enter the title of the project' }).clear();
- await page.getByRole('button', { name: 'Publish' }).nth(1).click(); 
+ await page.getByRole('button', { name: 'Publish' }).click();
+ await page.getByLabel('Publish Event').getByRole('button', { name: 'Publish' }).click();
 
-// await page.getByLabel('Publish Event').getByRole('button', { name: 'Publish' }).click();
  await validateAndLog({
     locator: page.getByText('Please fill project title!'),
     smessage: "✅ Project creation required a title",
@@ -388,6 +390,7 @@ for (const line of deliverytime) {
 // global
 for (let [field, config] of Object.entries(mandatoryglobalfield)) {
   const row = page.getByRole("row", { name: field, exact: true });
+  await page.waitForTimeout(1000);
 
   if (config.type === "dropdown") {
     let k = 0;
@@ -398,21 +401,25 @@ for (let [field, config] of Object.entries(mandatoryglobalfield)) {
     }
     if (config.value === "first") {
       await page.getByRole("option").first().click();
+      await page.waitForTimeout(1000);
     } 
   }
 
   else if (config.type === "text") {
     if (config.selector === "input") {
       await row.locator("input").click();
+      await page.waitForTimeout(1000);
       await row.locator("input").fill(config.value);
     } else {
-      await row.locator("td").nth(1).click(); //td → selects a table cell (<td> element).
+      await row.locator("td").nth(1).click(); 
+      await page.waitForTimeout(1000);
       await page.getByRole("tooltip").getByRole("textbox").fill(config.value);
     }
   }
 
   else if (config.type === "date") {
     await row.locator("td").nth(1).click();
+    await page.waitForTimeout(1000);
     await page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) }).click();
   }
 }
@@ -439,7 +446,7 @@ const price_cap_Client = async ({ page  , p_cap}) => {
   await page.getByRole('tab', { name: 'RFQ' }).click();
   if (await page.getByRole('tab', { name: 'Participants' }).isVisible()) {
   console.log(` Participants is visible`);
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(3000);
   } 
  await page.getByRole('tab', { name: 'Participants' }).dblclick();
  await page.getByRole('button', { name: 'icon: plus Add Price Cap' }).nth(1).click();
@@ -498,10 +505,10 @@ const best_offers = async ({ page }) => {
   await page.getByRole('textbox', { name: 'Search Title' }).fill(RFX_id)
   await page.getByRole('textbox', { name: 'Search Title' }).press("Enter");
   await page.getByText(title).first().click();
+  await page.waitForTimeout(2000);
   await page.getByRole('tab', { name: 'RFQ' }).click();
   await page.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
   await page.getByRole('menuitem', { name: 'Request Best Offers' }).click();
-  // getByRole('row', { name: 'Participated Vendors Vendor' }).getByLabel('') tick ke liye
   await page.getByRole('button', { name: 'Send Request' }).click();
   await page.waitForTimeout(1000);
 }
@@ -520,8 +527,6 @@ const convertToAuction = async ({ page }) => {
   await page.getByRole('menuitem', { name: 'Convert to Auction' }).click();
   await page.getByRole('button', { name: 'Continue' }).click();
   await page.waitForTimeout(3000);
-// ensures it's really visible
-
   let k = 0;
     while (!await page.locator('div').filter({ hasText: /^Configuration for Event$/ }).first().isVisible() && k < 5) {
       await page.locator('[aria-label="icon: right"]').first().dblclick();
@@ -534,7 +539,6 @@ const convertToAuction = async ({ page }) => {
   await page.getByRole('button', { name: 'Send to Auction team' }).click();
   await page.getByRole('button', { name: 'Send to Auction Team', exact: true }).click();
   await page.waitForTimeout(1000);
-  // getByText('RFQ sent to Auction Team')
     await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'RFQ sent to Auction Team' }).nth(3),
     smessage: "RFQ sent to Auction Team successfully ",
@@ -563,7 +567,6 @@ const convertToCBDAuction = async ({ page }) => {
   // await page.getByRole('button', { name: 'Save' }).click();
     let k = 0;
     while (!await page.getByRole('button', { name: 'Send to Auction Team', exact: true }).isVisible() && k < 3) {
-      // await page.getByRole('button', { name: 'Send to Auction team' }).dblclick();
       await page.locator('button.ant-btn.ant-btn-primary >> text=Send to Auction team').click();
 
       await page.waitForTimeout(1000);

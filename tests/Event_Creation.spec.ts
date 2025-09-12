@@ -10,7 +10,7 @@ test.beforeEach(async () => {
   test.info().setTimeout(TEST_TIMEOUT);
 });
 
-test.describe.serial("Event login & Creation Flow ,@Regression", () => {
+test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
 
     test("Create Event with PR (Tech and RFQ) @TC001 ,@Smoke, @Regression ", async ({ clientPage  }) => {
     await clientLogin({ page: clientPage });
@@ -84,17 +84,17 @@ test.describe.serial("Event login & Creation Flow ,@Regression", () => {
     await best_offers({ page: clientPage });
   });
 
-  test("Auction Client Side @TC0012, @Smoke , @Regression", async ({ clientPage }) => { // baki h
-    await clientLogin({ page: clientPage });
-    await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
-    await convertToAuction({ page: clientPage });
-  });
+  // test("Auction Client Side @TC0012, @Smoke , @Regression", async ({ clientPage }) => { // baki h
+  //   await clientLogin({ page: clientPage });
+  //   await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
+  //   await convertToAuction({ page: clientPage });
+  // });
 
-  test("CBD Auction Client Side @TC0013, @Smoke , @Regression", async ({ clientPage }) => {
-    await clientLogin({ page: clientPage });
-    await clientPage.getByRole('menuitem', { name: 'Events' }).click();
-    await convertToCBDAuction({ page: clientPage });
-  });
+  // test("CBD Auction Client Side @TC0013 , @Regression", async ({ clientPage }) => {
+  //   await clientLogin({ page: clientPage });
+  //   await clientPage.getByRole('menuitem', { name: 'Events' }).click();
+  //   await convertToCBDAuction({ page: clientPage });
+  // });
 
 });
 

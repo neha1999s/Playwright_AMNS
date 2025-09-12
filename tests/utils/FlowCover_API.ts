@@ -2027,7 +2027,7 @@ export async function vendorBidAPI() {
    const vendorUser = USERS("vendor");
    const headers = await login2(vendorUser.USER_MOBILE, vendorUser.OTP);
    var [RFX_id , title , event_uuid]= await eventCreationAPI();
-    const url1=`${BASE_URL}/event_groups/${event_uuid}`;// GET call
+    const url1=`${BASE_URL}event_groups/${event_uuid}`;// GET call
     try {
       // First: Perform GET request
       const response1 = await fetch(url1, { method: 'GET', headers });
@@ -2041,7 +2041,7 @@ export async function vendorBidAPI() {
       console.log('tech_uuid', tech_uuid);
       console.log('rfq_uuid', rfq_uuid);
 
-      const url2=`${BASE_URL}/user_intents`;      // POST call
+      const url2=`${BASE_URL}user_intents`;      // POST call
       const payload1 = JSON.stringify({
         "item_uuid": "RGdkZ2M=",
         "item_type": "EventGroup",
@@ -2055,7 +2055,7 @@ export async function vendorBidAPI() {
     if (response2.status !== 200) {
       throw new Error(`POST request failed: HTTP ${response2.status} – ${response2.statusText}`);
     }
-    const url3=`${BASE_URL}/template_responses`;      // POST call
+    const url3=`${BASE_URL}template_responses`;      // POST call
     const payload2 = JSON.stringify({
       "item_uuid": tech_uuid,
       "item_type": "TradeRequest",
@@ -2074,7 +2074,7 @@ export async function vendorBidAPI() {
 
   console.log('quick_uuid', quick_uuid);
 
-  const url4 = `${BASE_URL}/trade/${tech_uuid}?response_type=template&additional_fields=order_details`; // Get call
+  const url4 = `${BASE_URL}trade/${tech_uuid}?response_type=template&additional_fields=order_details`; // Get call
 
   const response4 = await fetch(url4, { method: 'GET', headers });
 
@@ -2111,7 +2111,7 @@ export async function vendorBidAPI() {
     console.log('key7', key7);
     console.log('key8', key8);
 
-    const url5 = `${BASE_URL}/template_responses/${quick_uuid}/create_page_responses`; //PUT call
+    const url5 = `${BASE_URL}template_responses/${quick_uuid}/create_page_responses`; //PUT call
     const payload3 = JSON.stringify({
     "form_uuid": form_uuid,
     "page_uuids": [page_uuid],
@@ -2147,7 +2147,7 @@ export async function vendorBidAPI() {
     throw new Error(`PUT request failed: HTTP ${response5.status} – ${response5.statusText}`);
   }
   
-  const url6 = `${BASE_URL}/template_responses/${quick_uuid}/create_page_responses`; //PUT call 2
+  const url6 = `${BASE_URL}template_responses/${quick_uuid}/create_page_responses`; //PUT call 2
   const payload4 = JSON.stringify({
     "form_uuid": form_uuid2,
     "page_uuids": [page_uuid2],
@@ -2184,7 +2184,7 @@ export async function vendorBidAPI() {
     throw new Error(`PUT request failed: HTTP ${response6.status} – ${response6.statusText}`);
   }
 
-  const url7 = `${BASE_URL}/template_responses/${quick_uuid}`;  //PATCH Call
+  const url7 = `${BASE_URL}template_responses/${quick_uuid}`;  //PATCH Call
 
   const payload5 = JSON.stringify({
     "status": "active",
@@ -2201,7 +2201,7 @@ export async function vendorBidAPI() {
     throw new Error(`PATCH request failed: HTTP ${response7.status} – ${response7.statusText}`);
   }
 
-  const url8 = `${BASE_URL}/trade/${rfq_uuid}?response_type=template&additional_fields=order_details`;  //GET Call
+  const url8 = `${BASE_URL}trade/${rfq_uuid}?response_type=template&additional_fields=order_details`;  //GET Call
   const response8 = await fetch(url8, { method: 'GET', headers });
 
     if (response8.status !== 200) {
@@ -2266,7 +2266,7 @@ export async function vendorBidAPI() {
     console.log('line_item_no2 ,trade_product_id2 , trade_product_uuid2', line_item_no2, trade_product_id2, trade_product_uuid2);
     console.log('trade_product_category_uuid2 , product_code2 , event_group_line_item_uuid2 , quantity2', trade_product_category_uuid2 , product_code2 , event_group_line_item_uuid2 , quantity2);
 
-    const url9 = `${BASE_URL}/v1/bids`;  //POST Call
+    const url9 = `${BASE_URL}v1/bids`;  //POST Call
     const payload6 = JSON.stringify({
     "trade_request_uuid": rfq_uuid,
     "company_uuid": "ZFpRcA==",
@@ -2294,7 +2294,7 @@ export async function vendorBidAPI() {
   const bid_uuid = data4.bid_uuid;
   console.log('bid_uuid' , bid_uuid);
 
-    const url10 = `${BASE_URL}/v1/bids/${bid_uuid}/create_bid_products`;  //POST Call
+    const url10 = `${BASE_URL}v1/bids/${bid_uuid}/create_bid_products`;  //POST Call
     const payload7 = JSON.stringify({
     "company_uuid": "ZFpRcA==",
     "trade_request_uuid": rfq_uuid,
@@ -2503,7 +2503,7 @@ export async function vendorBidAPI() {
     throw new Error(`POST request failed: HTTP ${response10.status} – ${response10.statusText}`);
    }
   
-    const url11 = `${BASE_URL}/v1/bids/${bid_uuid}/create_bid_products`;  //POST Call
+    const url11 = `${BASE_URL}v1/bids/${bid_uuid}/create_bid_products`;  //POST Call
     const payload8 = JSON.stringify({
         
     "company_uuid": "ZFpRcA==",
@@ -2715,7 +2715,7 @@ export async function vendorBidAPI() {
     throw new Error(`POST request failed: HTTP ${response11.status} – ${response11.statusText}`);
    };
 
-  const url12 = `${BASE_URL}/v1/bids/${bid_uuid}`;  //PATCH Call
+  const url12 = `${BASE_URL}v1/bids/${bid_uuid}`;  //PATCH Call
 
   const payload9 = JSON.stringify({
     "company_uuid": "ZFpRcA==",

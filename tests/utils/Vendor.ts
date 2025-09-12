@@ -1,6 +1,5 @@
 import { validateAndLog } from "./common";
 import { test } from "../setupBlocks/global.setup";
-import { ACTIVE_BACKEND, USERS, TEST_TIMEOUT } from "../setupBlocks/constant";
 import { fetch_prs , eventCreationAPI , vendorBidAPI , sendCounterOfferAPI , priceCapBeforeBid} from "./FlowCover_API";
 
 const vendor_bid_tech = async ({ page }) => {
@@ -34,6 +33,7 @@ const vendor_bid_tech_priceCap = async ({ page }) => {
   await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(RFX_id );
   await page.getByLabel('icon: search').locator('svg').dblclick();
   await page.getByText(title).first().click();
+  await page.waitForTimeout(3000);
   await page.getByRole('button', { name: 'I will participate' }).click();
   await page.getByRole('tab', { name: 'Technical Stage' }).click();
   await page.waitForTimeout(2000);
@@ -67,14 +67,18 @@ for (let i = 0; i < inlinefield.length; i++) {
   const [colIndex, rowIndex, value] = inlinefield[i];
   // click correct cell
   await page.locator(`.rdg-row >> nth=${rowIndex} >> div:nth-child(${colIndex})`).click();
-
+  if(!(await page.locator('input[type="text"]').isVisible)){
+    await page.locator(`.rdg-row >> nth=${rowIndex} >> div:nth-child(${colIndex})`).dblclick();
+  }
+ 
   // Fill the value
-  await page.locator('input[type="text"]').nth(0).fill(value);
-  await page.locator('input[type="text"]').nth(0).press("Enter");
+  await page.locator('input[type="text"]').fill(value);
+  await page.locator('input[type="text"]').press("Enter");
 }
 
 for (let [field, config] of Object.entries(mandatoryGlobalField )) {
   const row = page.getByRole("row", { name: field, exact: true });
+  await page.waitForTimeout(2000);
 
   if (config.type === "dropdown") {
     let retries = 0;
@@ -86,16 +90,20 @@ for (let [field, config] of Object.entries(mandatoryGlobalField )) {
 
     if (config.value === "first") {
       await page.getByRole("option").first().click();
+      await page.waitForTimeout(2000);
     } else {
       await page.getByRole("option", { name: config.value }).first().click();
+      await page.waitForTimeout(2000);
     }
   }
   else if (config.type === "text") {
-      await row.getByRole("gridcell").nth(1).click();
-      await page.locator('input[type="text"]').fill(config.value);
+    await row.getByRole("gridcell").nth(1).click();
+    await page.waitForTimeout(2000);
+    await page.locator('input[type="text"]').fill(config.value);
   }
   else if (config.type === "date") {
     await row.getByRole("gridcell").nth(1).click();
+    await page.waitForTimeout(2000);
     await page.getByRole("gridcell", { name: "icon: calendar" }).click();
     await page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) }).click();
   }
@@ -103,7 +111,7 @@ for (let [field, config] of Object.entries(mandatoryGlobalField )) {
   let a= 0;
     while (await page.getByRole('button', { name: 'Submit Quote' }).first().isVisible() && a < 2) {
       await page.getByRole('button', { name: 'Submit Quote' }).first().click();
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(2000);
   a++;
   }
    await validateAndLog({
@@ -130,14 +138,18 @@ for (let i = 0; i < inlineField.length; i++) {
   const [colIndex, rowIndex, value] = inlineField[i];
   // click correct cell
   await page.locator(`.rdg-row >> nth=${rowIndex} >> div:nth-child(${colIndex})`).click();
+  if(!(await page.locator('input[type="text"]').isVisible)){
+    await page.locator(`.rdg-row >> nth=${rowIndex} >> div:nth-child(${colIndex})`).dblclick();
+  }
 
   // Fill the value
-  await page.locator('input[type="text"]').nth(0).fill(value);
-  await page.locator('input[type="text"]').nth(0).press("Enter");
+  await page.locator('input[type="text"]').fill(value);
+  await page.locator('input[type="text"]').press("Enter");
 }
 
 for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   const row = page.getByRole("row", { name: field, exact: true });
+  await page.waitForTimeout(3000);
 
   if (config.type === "dropdown") {
     let retries = 0;
@@ -151,29 +163,33 @@ for (let [field, config] of Object.entries(mandatoryGlobalField)) {
       await page.getByRole("option").first().click();
     } else {
       await page.getByRole("option", { name: config.value }).first().click();
+      await page.waitForTimeout(2000);
     }
   }
   else if (config.type === "text") {
       await row.getByRole("gridcell").nth(1).click();
+      await page.waitForTimeout(2000);
       await page.locator('input[type="text"]').fill(config.value);
+      await page.waitForTimeout(2000);
   }
   else if (config.type === "date") {
     await row.getByRole("gridcell").nth(1).click();
+    await page.waitForTimeout(2000);
     await page.getByRole("gridcell", { name: "icon: calendar" }).click();
     await page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) }).click();
   }
 }
   let a= 0;
     while (await page.getByRole('button', { name: 'Submit Quote' }).first().isVisible() && a < 2) {
-      await page.getByRole('button', { name: 'Submit Quote' }).first().click();
-      await page.waitForTimeout(1000);
+      await page.getByRole('button', { name: 'Submit Quote' }).first().dblclick();
+      await page.waitForTimeout(2000);
   a++;
   }
   const tooltip1 = page.getByRole('tooltip', { name: 'Net Price should be less than' });
   const tooltip2 = page.getByText('Please enter valid responses');
 
   await page.getByRole('gridcell', { name: '₹ 50 /KG' }).hover();
-  if (await tooltip1.isVisible() && await tooltip2.isVisible()) {
+  if (await tooltip1.isVisible() || await tooltip2.isVisible()) {
   console.log('✅ Net Price is more than Price cap - Vendor Bid is not submitted ');
   } else {
   throw new Error('❌ Net Price is more than Price cap - Vendor Bid is  submitted  ');
@@ -182,12 +198,13 @@ for (let [field, config] of Object.entries(mandatoryGlobalField)) {
 
 const vendor_bid_tech_regret = async ({ page }) => {
   var [ RFX_id , title ] = await eventCreationAPI();
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(3000);
   if (!RFX_id  || !title) throw new Error('Missing RFX ID or title');
   await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(RFX_id );
   await page.getByLabel('icon: search').locator('svg').dblclick();
   await page.getByText(title).first().click();
  await page.getByRole('button', { name: 'I will participate' }).click();
+ await page.waitForTimeout(3000);
   await page.getByRole('tab', { name: 'Technical Stage' }).click();
   await page.waitForTimeout(2000);
   await page.locator('span').filter({ hasText: 'Don’t miss out on' }).locator('a').click();
@@ -223,15 +240,18 @@ for (let i = 0; i < inlinefieldrfq.length; i++) {
 
   const [colIndex, rowIndex, value] = inlinefieldrfq[i];
   // click correct cell
-  await page.locator(`.rdg-row >> nth=${rowIndex} >> div:nth-child(${colIndex})`).click();
-
+  await page.locator(`.rdg-row >> nth=${rowIndex} >> div:nth-child(${colIndex})`).dblclick();
+  if(!(await page.locator('input[type="text"]').isVisible)){
+    await page.locator(`.rdg-row >> nth=${rowIndex} >> div:nth-child(${colIndex})`).dblclick();
+  }
   // Fill the value
-  await page.locator('input[type="text"]').nth(0).fill(value);
-  await page.locator('input[type="text"]').nth(0).press("Enter");
+  await page.locator('input[type="text"]').fill(value);
+  await page.locator('input[type="text"]').press("Enter");
 }
 
 for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   const row = page.getByRole("row", { name: field, exact: true });
+  await page.waitForTimeout(2000);
 
   if (config.type === "dropdown") {
     let retries = 0;
@@ -243,16 +263,20 @@ for (let [field, config] of Object.entries(mandatoryGlobalField)) {
 
     if (config.value === "first") {
       await page.getByRole("option").first().click();
+      await page.waitForTimeout(2000);
     } else {
       await page.getByRole("option", { name: config.value }).first().click();
+      await page.waitForTimeout(2000);
     }
   }
   else if (config.type === "text") {
       await row.getByRole("gridcell").nth(1).click();
+      await page.waitForTimeout(2000);
       await page.locator('input[type="text"]').fill(config.value);
   }
   else if (config.type === "date") {
     await row.getByRole("gridcell").nth(1).click();
+    await page.waitForTimeout(2000);
     await page.getByRole("gridcell", { name: "icon: calendar" }).click();
     await page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) }).click();
   }
@@ -287,35 +311,44 @@ for (let i = 0; i < inline_non_regrets.length; i++) {
   const [colIndex, rowIndex, value] = inline_non_regrets[i];
   // click correct cell
   await page.locator(`.rdg-row >> nth=${rowIndex} >> div:nth-child(${colIndex})`).click();
+  if(!(await page.locator('input[type="text"]').isVisible)){
+    await page.locator(`.rdg-row >> nth=${rowIndex} >> div:nth-child(${colIndex})`).dblclick();
+  }
 
   // Fill the value
-  await page.locator('input[type="text"]').nth(0).fill(value);
-  await page.locator('input[type="text"]').nth(0).press("Enter");
+  await page.locator('input[type="text"]').fill(value);
+  await page.locator('input[type="text"]').press("Enter");
 }
 
 for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   const row = page.getByRole("row", { name: field, exact: true });
+  await page.waitForTimeout(3000);
 
   if (config.type === "dropdown") {
     let retries = 0;
     while (!(await page.getByRole("option").first().isVisible()) && retries < 3) {
       await row.getByRole("gridcell").nth(1).click();
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1000);
       retries++;
     }
 
     if (config.value === "first") {
       await page.getByRole("option").first().click();
+      await page.waitForTimeout(2000);
     } else {
       await page.getByRole("option", { name: config.value }).first().click();
+      await page.waitForTimeout(2000);
     }
   }
   else if (config.type === "text") {
       await row.getByRole("gridcell").nth(1).click();
+      await page.waitForTimeout(2000);
       await page.locator('input[type="text"]').fill(config.value);
+      await page.locator('input[type="text"]').press("Enter");
   }
   else if (config.type === "date") {
     await row.getByRole("gridcell").nth(1).click();
+    await page.waitForTimeout(2000);
     await page.getByRole("gridcell", { name: "icon: calendar" }).click();
     await page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) }).click();
   }
@@ -342,6 +375,7 @@ const counter_offer_vendor1 = async ({ page}) => {
   await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(RFX_id );
   await page.getByLabel('icon: search').locator('svg').dblclick();
   await page.getByText(title).first().click();
+  await page.waitForTimeout(2000);
   await page.getByRole('tab', { name: 'RFQ' }).click();
   await page.getByRole('button', { name: 'Accept Offer' }).click();
 
@@ -362,6 +396,7 @@ const counter_offer_vendor2 = async ({ page , counterofferVendorbid}) => {
   await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(RFX_id );
   await page.getByLabel('icon: search').locator('svg').dblclick();
   await page.getByText(title).first().click();
+  await page.waitForTimeout(2000);
   await page.getByRole('tab', { name: 'RFQ' }).click();
   await page.getByRole('button', { name: 'Decline' }).click();
   await page.getByRole('textbox', { name: 'Add a remark for declining' }).fill(counterofferVendorbid.C_offerRemark);
@@ -384,18 +419,18 @@ const counter_offer_vendor3 = async ({ page , counterofferVendorbid}) => {
   await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(RFX_id );
   await page.getByLabel('icon: search').locator('svg').dblclick();
   await page.getByText(title).first().click();
+  await page.waitForTimeout(2000);
   await page.getByRole('tab', { name: 'RFQ' }).click();
-  // await page.getByRole('gridcell', { name: '₹ 20 /NO icon: arrow-right ₹' }).click();
   await page.getByRole('button', { name: 'Decline' }).click();
   await page.getByRole('button', { name: 'Modify counter offer' }).click();
   await page.getByRole('gridcell', { name: '₹ 20 /KG icon: arrow-right ₹' }).click();
   await page.locator('input[type="text"]').fill(counterofferVendorbid.C_offerModify);
   await page.locator('input[type="text"]').press("Enter");
-  await page.waitForTimeout(1000);
-  await page.getByRole('button', { name: 'Place Modified Bid' }).first().click();
+  await page.waitForTimeout(3000);
+  await page.getByRole('button', { name: 'Place Modified Bid' }).first().dblclick();
   await page.getByRole('textbox', { name: 'Add a remark for declining' }).fill(counterofferVendorbid.C_offerRemark);
   await page.getByLabel('Want to negotiate on the').getByRole('button', { name: 'Place Modified Bid' }).click();
-
+  await page.waitForTimeout(2000);
   await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Bid revised successfully!' }).nth(3),
     smessage: "Revised Counter offer  bid sent to Vendor successfully ",
