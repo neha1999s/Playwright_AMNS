@@ -1,0 +1,21 @@
+{
+  "name": "e2e-tests",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "@reportportal/agent-js-playwright": "^5.1.11",
+    "@types/node": "^20.14.9",
+    "node-fetch": "^3.3.2",
+    "xlsx": "^0.18.5",
+    "yaml": "^2.4.5"
+  },
+  "dependencies": {
+    "playwright": "^1.54.1"
+  }
+}
