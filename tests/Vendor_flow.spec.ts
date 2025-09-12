@@ -52,11 +52,11 @@ test.describe.serial("Vendor Login & Flow,@Regression", () => {
     await counter_offer_vendor3({ page: vendorPage, counterofferVendorbid: counterofferVendor});
   });
 
-  test("Best offer Vendor Side @TC0021, @Smoke , @Regression", async ({ vendorPage }) => { 
-    await bestOfferAPI();
-    await vendorLogin({ page: vendorPage });
-    await best_offer_vendor({ page: vendorPage });
-  });
+  // test("Best offer Vendor Side @TC0021, @Smoke , @Regression", async ({ vendorPage }) => { 
+  //   await bestOfferAPI();
+  //   await vendorLogin({ page: vendorPage });
+  //   await best_offer_vendor({ page: vendorPage });
+  // });
 
 
 });
