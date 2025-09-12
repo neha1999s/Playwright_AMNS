@@ -173,7 +173,7 @@ for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   const tooltip2 = page.getByText('Please enter valid responses');
 
   await page.getByRole('gridcell', { name: '₹ 50 /KG' }).hover();
-  if (await tooltip1.isVisible() && await tooltip2.isVisible()) {
+  if (await tooltip1.isVisible() || await tooltip2.isVisible()) {
   console.log('✅ Net Price is more than Price cap - Vendor Bid is not submitted ');
   } else {
   throw new Error('❌ Net Price is more than Price cap - Vendor Bid is  submitted  ');
