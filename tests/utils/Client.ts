@@ -90,7 +90,7 @@ const pr_tech_auction = async ({ page  , eventCreation_detail  }) => {
 await page.getByRole('button', { name: 'Save Schedule' }).click();
 await page.getByRole('button', { name: 'Publish' }).click(); 
 await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
-await page.waitForTimeout(4000);
+await page.waitForTimeout(5000);
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -148,7 +148,7 @@ const qa_event_vendorwise = async ({ page  , eventCreation_detail}) => {
 await page.getByRole('button', { name: 'Save Schedule' }).click();
 await page.getByRole('button', { name: 'Publish' }).click(); 
 await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
-await page.waitForTimeout(3000);
+await page.waitForTimeout(5000);
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -209,7 +209,7 @@ const qa_event_lineitem = async ({ page , eventCreation_detail}) => {
 await page.getByRole('button', { name: 'Save Schedule' }).click();
 await page.getByRole('button', { name: 'Publish' }).click(); 
 await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
-await page.waitForTimeout(3000);
+await page.waitForTimeout(5000);
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,

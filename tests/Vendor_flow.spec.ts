@@ -52,11 +52,11 @@ test.describe("Vendor Login & Flow, @Smoke , @Regression", () => {
     await counter_offer_vendor3({ page: vendorPage, counterofferVendorbid: counterofferVendor});
   });
 
-<<<<<<< HEAD
+
   // test("Best offer Vendor Side @TC0021 , @Regression", async ({ vendorPage }) => { 
-=======
+
   // test("Best offer Vendor Side @TC0021, @Smoke , @Regression", async ({ vendorPage }) => { 
->>>>>>> 647bf96fa4b1b4ee6d56d7340619402a27957002
+
   //   await bestOfferAPI();
   //   await vendorLogin({ page: vendorPage });
   //   await best_offer_vendor({ page: vendorPage });
