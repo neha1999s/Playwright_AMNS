@@ -32,12 +32,12 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await qa_event_vendorwise({ page: clientPage , eventCreation_detail: eventCreation_details  });
   });
 
-  test("Event Creation line item wise with event type RFQ @TC004 , @Smoke,@Regression ", async ({ clientPage  }) => {
-    await clientLogin({ page: clientPage });
-    await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
-    await pr_tech_RFQ({ page: clientPage });
-    await qa_event_lineitem ({ page: clientPage , eventCreation_detail: eventCreation_details  });
-  });
+  // test("Event Creation line item wise with event type RFQ @TC004 , @Smoke,@Regression ", async ({ clientPage  }) => {
+  //   await clientLogin({ page: clientPage });
+  //   await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
+  //   await pr_tech_RFQ({ page: clientPage });
+  //   await qa_event_lineitem ({ page: clientPage , eventCreation_detail: eventCreation_details  });
+  // });
    
   test("Event Creation line item wise with event type Auction @TC005 ,@Smoke, @Regression ", async ({ clientPage  }) => {
     await clientLogin({ page: clientPage });

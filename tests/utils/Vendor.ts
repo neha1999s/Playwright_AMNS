@@ -225,8 +225,9 @@ const vendor_bid_tech_regret = async ({ page }) => {
     await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
   } else {
     await page.getByRole('menuitem', { name: 'Regret Item' }).click();
+    
   }}
-  await page.getByRole('button', { name: 'Submit' }).first().click();
+  await page.getByRole('button', { name: 'Submit' }).first().dblclick();
   await validateAndLog({
     locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
     smessage: "Technical Stage Submitted successfully ",

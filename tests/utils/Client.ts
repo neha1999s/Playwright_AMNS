@@ -508,7 +508,6 @@ const counter_offer = async ({ page  , countOffer}) => {
   }
   await page.getByRole('cell', { name: '₹ 20 /KG' }).getByRole('textbox').fill(countOffer.C_offer);
   await page.getByRole('button', { name: 'Send Counter Offer' }).click();
-  await page.waitForTimeout(2000);
   
    await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Counter offer sent to supplier' }).nth(3),
@@ -526,7 +525,7 @@ const best_offers = async ({ page }) => {
   await page.getByRole('textbox', { name: 'Search Title' }).fill(RFX_id)
   await page.getByRole('textbox', { name: 'Search Title' }).press("Enter");
   await page.getByText(title).first().click();
-  await page.waitForTimeout(2000);
+  await page.getByRole('tab', { name: 'RFQ' }).waitFor({ state: "visible", timeout: 2000 })
   await page.getByRole('tab', { name: 'RFQ' }).click();
   await page.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
   await page.getByRole('menuitem', { name: 'Request Best Offers' }).click();
