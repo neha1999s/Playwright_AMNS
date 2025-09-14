@@ -43,7 +43,7 @@ const vendor_bid_tech_priceCap = async ({ page }) => {
   for (let i = 0; i < 2; i++) {
     await page.getByText('Quick Fill').nth(i).dblclick();
     await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: "visible", timeout: 5000 });
-    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).dblclick();
   }
   await page.getByRole('button', { name: 'Submit' }).first().click();
   await validateAndLog({
