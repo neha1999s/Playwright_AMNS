@@ -43,15 +43,17 @@ const pr_tech_auction = async ({ page  , eventCreation_detail  }) => {
  await page.getByRole('button', { name: 'Save' }).click();
  await page.getByRole('button', { name: 'Select Templates' }).click();
  await page.getByRole('menuitem', { name: eventCreation_detail.tech_template }).click();
-//  line item - add evaluator
- let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
-  for (let i = 0; i < buttons.length; i++) {
-    // Re-query the buttons to get fresh references
-    await page.getByRole("button", { name: "icon: plus Add Evaluator" }).first().click();
-    await page.waitForTimeout(1000);
-    await page.getByRole("menuitem", { name: eventCreation_detail.evaluator }).click();
-    await page.waitForTimeout(1000);
-  }
+// Line item - add evaluator
+let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
+for (let i = 0; i < buttons.length; i++) {
+  // Re-query button fresh each iteration
+  const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
+  await addEvaluatorBtn.click();
+
+  const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
+  await evaluatorOption.waitFor({ state: 'visible', timeout: 5000 });
+  await evaluatorOption.click();
+}
  console.log("Evaluators added");
 
  await page.getByRole('tab', { name: 'Auction' }).click();
@@ -63,34 +65,30 @@ const pr_tech_auction = async ({ page  , eventCreation_detail  }) => {
   await page. getByRole('checkbox').click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   // Vendor search
- await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click();
-  //  for (const company of eventCreation_detail.search_vendor) {
- await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
- await page.waitForTimeout(2000);
-  if(!(await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).isVisible)){ 
-  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').clear();
-  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ const vendorCombobox = page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div');
+ await vendorCombobox.first().click();
+
+// Type vendor name
+ const searchInput = page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field');
+ await searchInput.fill(eventCreation_detail.search_vendor);
+
+// Wait for dropdown option
+ const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
+
+ try {
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
+ } catch {
+  // Retry if not visible
+   await searchInput.clear();
+   await searchInput.fill(eventCreation_detail.search_vendor);
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
  }
- await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
-  // }
+
+// Select the vendor
+await vendorOption.click();
+
  await page.getByRole('button', { name: 'Publish' }).click();
- await page.getByRole('button', { name: 'Edit Schedule' }).click();
-// tech & rfq edit time
- for (let i = 0; i < 2; i++) {
-  if (i === 0) {
-    await page.getByText('30 Mins', { exact: true }).first().click();
-  } else {
-    await page.getByText('Mins').nth(2).click();
-  }
-  await page.getByRole('menuitem', { name: 'Custom duration' }).click();
-  await page.getByRole('spinbutton', { name: '60' }).click();
-  await page.getByRole('spinbutton', { name: '60' }).fill(eventCreation_detail.edit_schedule);
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-await page.getByRole('button', { name: 'Save Schedule' }).click();
-await page.getByRole('button', { name: 'Publish' }).click(); 
-await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
-await page.waitForTimeout(5000);
+ await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -103,52 +101,58 @@ const qa_event_vendorwise = async ({ page  , eventCreation_detail}) => {
  let title = String("Auto_Event_" + epochSeconds);
  await page.getByRole('textbox', { name: 'Enter the title of the project' }).fill(title);
  await page.getByRole('tab', { name: 'Technical Stage' }).click();
- await page.locator('div').filter({ hasText: /^Select Template$/ }).first().click();
- await page.waitForTimeout(1000);
- await page.getByRole('menuitem', { name: eventCreation_detail.tech_template }).first().click();
- console.log("Tech Template selected");
-//  line item - add evaluator
- let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
-  for (let i = 0; i < buttons.length; i++) {
-    // Re-query the buttons to get fresh references
-    await page.getByRole("button", { name: "icon: plus Add Evaluator" }).first().click();
-    await page.waitForTimeout(1000);
-    await page.getByRole("menuitem", { name: eventCreation_detail.evaluator }).click();
-    await page.waitForTimeout(1000);
-  }
+  // Select Tech Template
+await page.locator('div', { hasText: /^Select Template$/ }).first().click();
+
+const templateOption = page.getByRole('menuitem', { name: eventCreation_detail.tech_template }).first();
+await templateOption.waitFor({ state: 'visible', timeout: 5000 });
+await templateOption.click();
+
+console.log("✅ Tech Template selected");
+
+// Line item - add evaluator
+let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
+for (let i = 0; i < buttons.length; i++) {
+  // Re-query button fresh each iteration
+  const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
+  await addEvaluatorBtn.click();
+
+  const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
+  await evaluatorOption.waitFor({ state: 'visible', timeout: 5000 });
+  await evaluatorOption.click();
+}
+
  console.log("Evaluators added");
  await page.getByRole('tab', { name: 'RFQ' }).click();
- await page.getByRole('button', { name: 'Formula Template' }).click();
- await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template, exact: true }).click();
- await page.getByRole('button', { name: 'Yes' }).click();
- console.log("RFQ Template selected");
+//  await page.getByRole('button', { name: 'Formula Template' }).click();
+//  await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template1, exact: true }).click();
+//  await page.getByRole('button', { name: 'Yes' }).click();
+//  console.log("RFQ Template selected");
   // Vendor search
- await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click();
- await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
- await page.waitForTimeout(2000);
- if(!(await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).isVisible)){ 
-  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').clear();
-  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ const vendorCombobox = page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div');
+ await vendorCombobox.first().click();
+
+// Type vendor name
+ const searchInput = page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field');
+ await searchInput.fill(eventCreation_detail.search_vendor);
+
+// Wait for dropdown option
+ const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
+
+ try {
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
+ } catch {
+  // Retry if not visible
+   await searchInput.clear();
+   await searchInput.fill(eventCreation_detail.search_vendor);
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
  }
- await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
+
+// Select the vendor
+await vendorOption.click();
+
  await page.getByRole('button', { name: 'Publish' }).click();
- await page.getByRole('button', { name: 'Edit Schedule' }).click();
-// tech & rfq edit time
- for (let i = 0; i < 2; i++) {
-  if (i === 0) {
-    await page.getByText('30 Mins', { exact: true }).first().click();
-  } else {
-    await page.getByText('Mins').nth(2).click();
-  }
-  await page.getByRole('menuitem', { name: 'Custom duration' }).click();
-  await page.getByRole('spinbutton', { name: '60' }).click();
-  await page.getByRole('spinbutton', { name: '60' }).fill(eventCreation_detail.edit_schedule);
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-await page.getByRole('button', { name: 'Save Schedule' }).click();
-await page.getByRole('button', { name: 'Publish' }).click(); 
-await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
-await page.waitForTimeout(5000);
+ await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -167,49 +171,49 @@ const qa_event_lineitem = async ({ page , eventCreation_detail}) => {
  await page.getByRole('button', { name: 'Select Templates' }).click();
  await page.getByRole('menuitem', { name: eventCreation_detail.tech_template }).click();
 
-//  line item - add evaluator
- let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
-  for (let i = 0; i < buttons.length; i++) {
-    // Re-query the buttons to get fresh references
-    await page.getByRole("button", { name: "icon: plus Add Evaluator" }).first().click();
-    await page.waitForTimeout(1000);
-    await page.getByRole("menuitem", { name: eventCreation_detail.evaluator }).click();
-    await page.waitForTimeout(1000);
-  }
+// Line item - add evaluator
+let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
+for (let i = 0; i < buttons.length; i++) {
+  // Re-query button fresh each iteration
+  const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
+  await addEvaluatorBtn.click();
+
+  const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
+  await evaluatorOption.waitFor({ state: 'visible', timeout: 5000 });
+  await evaluatorOption.click();
+}
+
  console.log("Evaluators added");
  
  await page.getByRole('tab', { name: 'RFQ' }).click();
  await page.getByRole('button', { name: 'Formula Template' }).click();
- await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template, exact: true }).click();
+ await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template1, exact: true }).click();
  await page.getByRole('button', { name: 'Yes' }).click();
 
   // Vendor search
- await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click();
- await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
- await page.waitForTimeout(2000);
- if(!(await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).isVisible)){ 
-  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').clear();
-  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ const vendorCombobox = page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div');
+ await vendorCombobox.first().click();
+
+// Type vendor name
+ const searchInput = page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field');
+ await searchInput.fill(eventCreation_detail.search_vendor);
+
+// Wait for dropdown option
+ const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
+
+ try {
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
+ } catch {
+  // Retry if not visible
+   await searchInput.clear();
+   await searchInput.fill(eventCreation_detail.search_vendor);
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
  }
- await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click() 
- await page.getByRole('button', { name: 'Publish' }).click();
- await page.getByRole('button', { name: 'Edit Schedule' }).click();
-// tech & rfq edit time
- for (let i = 0; i < 2; i++) {
-  if (i === 0) {
-    await page.getByText('30 Mins', { exact: true }).first().click();
-  } else {
-    await page.getByText('Mins').nth(2).click();
-  }
-  await page.getByRole('menuitem', { name: 'Custom duration' }).click();
-  await page.getByRole('spinbutton', { name: '60' }).click();
-  await page.getByRole('spinbutton', { name: '60' }).fill(eventCreation_detail.edit_schedule);
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-await page.getByRole('button', { name: 'Save Schedule' }).click();
+
+// Select the vendor
+await vendorOption.click();
 await page.getByRole('button', { name: 'Publish' }).click(); 
 await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
-await page.waitForTimeout(5000);
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -228,15 +232,18 @@ const qa_event_type_Auction = async ({ page  , eventCreation_detail}) => {
  await page.getByRole('button', { name: 'Select Templates' }).click();
  await page.getByRole('menuitem', { name: eventCreation_detail.tech_template }).click();
 
-//  line item - add evaluator
- let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
-  for (let i = 0; i < buttons.length; i++) {
-    // Re-query the buttons to get fresh references
-    await page.getByRole("button", { name: "icon: plus Add Evaluator" }).first().click();
-    await page.waitForTimeout(3000);
-    await page.getByRole("menuitem", { name: eventCreation_detail.evaluator }).click();
-    await page.waitForTimeout(3000);
-  }
+// Line item - add evaluator
+let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
+for (let i = 0; i < buttons.length; i++) {
+  // Re-query button fresh each iteration
+  const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
+  await addEvaluatorBtn.click();
+
+  const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
+  await evaluatorOption.waitFor({ state: 'visible', timeout: 5000 });
+  await evaluatorOption.click();
+}
+
  console.log("Evaluators added");
  
  await page.getByRole('tab', { name: 'RFQ' }).click();
@@ -245,32 +252,30 @@ const qa_event_type_Auction = async ({ page  , eventCreation_detail}) => {
  await page.getByRole('button', { name: 'Save' }).click();
 //  Add Template
  await page.getByRole('button', { name: 'Formula Template' }).click();
- await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template, exact: true }).click();
+ await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template1, exact: true }).click();
  await page.getByRole('button', { name: 'Yes' }).click();
   // Vendor search
- await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click(); 
- await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
- await page.waitForTimeout(4000);
- if(!(await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).isVisible)){ 
-  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').clear();
-  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ const vendorCombobox = page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div');
+ await vendorCombobox.first().click();
+
+// Type vendor name
+ const searchInput = page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field');
+ await searchInput.fill(eventCreation_detail.search_vendor);
+
+// Wait for dropdown option
+ const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
+
+ try {
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
+ } catch {
+  // Retry if not visible
+   await searchInput.clear();
+   await searchInput.fill(eventCreation_detail.search_vendor);
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
  }
- await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
- await page.getByRole('button', { name: 'Publish' }).click();
- await page.getByRole('button', { name: 'Edit Schedule' }).click();
-// tech & rfq edit time
- for (let i = 0; i < 2; i++) {
-  if (i === 0) {
-    await page.getByText('30 Mins', { exact: true }).first().click();
-  } else {
-    await page.getByText('Mins').nth(2).click();
-  }
-  await page.getByRole('menuitem', { name: 'Custom duration' }).click();
-  await page.getByRole('spinbutton', { name: '60' }).click();
-  await page.getByRole('spinbutton', { name: '60' }).fill(eventCreation_detail.edit_schedule);
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-await page.getByRole('button', { name: 'Save Schedule' }).click();
+
+// Select the vendor
+await vendorOption.click();
 await page.getByRole('button', { name: 'Publish' }).click(); 
 await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
 await page.waitForTimeout(3000);
@@ -291,15 +296,18 @@ const publish_event_with_blank_title = async ({ page , eventCreation_detail }) =
  await page.getByRole('button', { name: 'Select Templates' }).click();
  await page.getByRole('menuitem', { name: eventCreation_detail.tech_template }).click();
 
-//  line item - add evaluator
- let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
-  for (let i = 0; i < buttons.length; i++) {
-    // Re-query the buttons to get fresh references
-    await page.getByRole("button", { name: "icon: plus Add Evaluator" }).first().click();
-    await page.waitForTimeout(3000);
-    await page.getByRole("menuitem", { name: eventCreation_detail.evaluator }).click();
-    await page.waitForTimeout(3000);
-  }
+// Line item - add evaluator
+let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
+for (let i = 0; i < buttons.length; i++) {
+  // Re-query button fresh each iteration
+  const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
+  await addEvaluatorBtn.click();
+
+  const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
+  await evaluatorOption.waitFor({ state: 'visible', timeout: 5000 });
+  await evaluatorOption.click();
+}
+
  console.log("Evaluators added");
  
  await page.getByRole('tab', { name: 'RFQ' }).click();
@@ -309,15 +317,28 @@ const publish_event_with_blank_title = async ({ page , eventCreation_detail }) =
  await page.waitForTimeout(2000);
 
   // Vendor search
- await page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div').first().click();
- await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
- await page.waitForTimeout(3000);
- if(!(await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).isVisible)){ 
-  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').clear();
-  await page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field').fill(eventCreation_detail.search_vendor);
+ const vendorCombobox = page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div');
+ await vendorCombobox.first().click();
+
+// Type vendor name
+ const searchInput = page.locator('div.ant-select-selection[role="combobox"] input.ant-select-search__field');
+ await searchInput.fill(eventCreation_detail.search_vendor);
+
+// Wait for dropdown option
+ const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
+
+ try {
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
+ } catch {
+  // Retry if not visible
+   await searchInput.clear();
+   await searchInput.fill(eventCreation_detail.search_vendor);
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
  }
- await page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) }).click();
- await page.waitForTimeout(3000);
+
+// Select the vendor
+await vendorOption.click();
+
  await page.getByRole('textbox', { name: 'Enter the title of the project' }).clear();
  await page.getByRole('button', { name: 'Publish' }).click();
  await page.getByLabel('Publish Event').getByRole('button', { name: 'Publish' }).click();

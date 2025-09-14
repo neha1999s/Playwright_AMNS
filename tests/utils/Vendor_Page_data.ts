@@ -37,8 +37,8 @@ export const inlinefields: [number, number, string][] = [
 
  export const inline_non_regret: [number, number, string][] = [
   [7, 0, "20"],
-  [7, 0, "3"],
-  [8, 0, "2"],
+  [9, 0, "3"],
+  [11, 0, "2"],
 ];
 
 export const counterofferVendor = {

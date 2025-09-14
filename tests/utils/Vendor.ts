@@ -76,42 +76,44 @@ for (let i = 0; i < inlinefield.length; i++) {
   await page.locator('input[type="text"]').press("Enter");
 }
 
-for (let [field, config] of Object.entries(mandatoryGlobalField )) {
+for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   const row = page.getByRole("row", { name: field, exact: true });
-  await page.waitForTimeout(2000);
 
   if (config.type === "dropdown") {
     let retries = 0;
-    while (!(await page.getByRole("option").first().isVisible()) && retries < 3) {
+    const optionLocator = config.value === "first"
+      ? page.getByRole("option").first()
+      : page.getByRole("option", { name: config.value }).first();
+
+    // Retry opening dropdown until option is visible
+    while (!(await optionLocator.isVisible()) && retries < 3) {
       await row.getByRole("gridcell").nth(1).click();
-      await page.waitForTimeout(500);
+      await optionLocator.waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
       retries++;
     }
 
-    if (config.value === "first") {
-      await page.getByRole("option").first().click();
-      await page.waitForTimeout(2000);
-    } else {
-      await page.getByRole("option", { name: config.value }).first().click();
-      await page.waitForTimeout(2000);
-    }
-  }
-  else if (config.type === "text") {
+    await optionLocator.click();
+
+  } else if (config.type === "text") {
+    const input = page.locator('input[type="text"]');
+
     await row.getByRole("gridcell").nth(1).click();
-    await page.waitForTimeout(2000);
-    await page.locator('input[type="text"]').fill(config.value);
-  }
-  else if (config.type === "date") {
+    await input.waitFor({ state: "visible", timeout: 5000 });
+    await input.fill(config.value);
+    await input.press("Enter");
+
+  } else if (config.type === "date") {
     await row.getByRole("gridcell").nth(1).click();
-    await page.waitForTimeout(2000);
     await page.getByRole("gridcell", { name: "icon: calendar" }).click();
-    await page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) }).click();
+
+    const dateCell = page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) });
+    await dateCell.waitFor({ state: "visible", timeout: 5000 });
+    await dateCell.click();
   }
 }
-  let a= 0;
+let a= 0;
     while (await page.getByRole('button', { name: 'Submit Quote' }).first().isVisible() && a < 2) {
-      await page.getByRole('button', { name: 'Submit Quote' }).first().click();
-      await page.waitForTimeout(2000);
+      await page.getByRole('button', { name: 'Submit Quote' }).first().dblclick();
   a++;
   }
    await validateAndLog({
@@ -149,34 +151,37 @@ for (let i = 0; i < inlineField.length; i++) {
 
 for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   const row = page.getByRole("row", { name: field, exact: true });
-  await page.waitForTimeout(3000);
 
   if (config.type === "dropdown") {
     let retries = 0;
-    while (!(await page.getByRole("option").first().isVisible()) && retries < 3) {
+    const optionLocator = config.value === "first"
+      ? page.getByRole("option").first()
+      : page.getByRole("option", { name: config.value }).first();
+
+    // Retry opening dropdown until option is visible
+    while (!(await optionLocator.isVisible()) && retries < 3) {
       await row.getByRole("gridcell").nth(1).click();
-      await page.waitForTimeout(500);
+      await optionLocator.waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
       retries++;
     }
 
-    if (config.value === "first") {
-      await page.getByRole("option").first().click();
-    } else {
-      await page.getByRole("option", { name: config.value }).first().click();
-      await page.waitForTimeout(2000);
-    }
-  }
-  else if (config.type === "text") {
-      await row.getByRole("gridcell").nth(1).click();
-      await page.waitForTimeout(2000);
-      await page.locator('input[type="text"]').fill(config.value);
-      await page.waitForTimeout(2000);
-  }
-  else if (config.type === "date") {
+    await optionLocator.click();
+
+  } else if (config.type === "text") {
+    const input = page.locator('input[type="text"]');
+
     await row.getByRole("gridcell").nth(1).click();
-    await page.waitForTimeout(2000);
+    await input.waitFor({ state: "visible", timeout: 5000 });
+    await input.fill(config.value);
+    await input.press("Enter");
+
+  } else if (config.type === "date") {
+    await row.getByRole("gridcell").nth(1).click();
     await page.getByRole("gridcell", { name: "icon: calendar" }).click();
-    await page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) }).click();
+
+    const dateCell = page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) });
+    await dateCell.waitFor({ state: "visible", timeout: 5000 });
+    await dateCell.click();
   }
 }
   let a= 0;
@@ -251,40 +256,42 @@ for (let i = 0; i < inlinefieldrfq.length; i++) {
 
 for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   const row = page.getByRole("row", { name: field, exact: true });
-  await page.waitForTimeout(2000);
 
   if (config.type === "dropdown") {
     let retries = 0;
-    while (!(await page.getByRole("option").first().isVisible()) && retries < 3) {
+    const optionLocator = config.value === "first"
+      ? page.getByRole("option").first()
+      : page.getByRole("option", { name: config.value }).first();
+
+    // Retry opening dropdown until option is visible
+    while (!(await optionLocator.isVisible()) && retries < 3) {
       await row.getByRole("gridcell").nth(1).click();
-      await page.waitForTimeout(500);
+      await optionLocator.waitFor({ state: "visible", timeout: 2000 }).catch(() => {});
       retries++;
     }
 
-    if (config.value === "first") {
-      await page.getByRole("option").first().click();
-      await page.waitForTimeout(2000);
-    } else {
-      await page.getByRole("option", { name: config.value }).first().click();
-      await page.waitForTimeout(2000);
-    }
-  }
-  else if (config.type === "text") {
-      await row.getByRole("gridcell").nth(1).click();
-      await page.waitForTimeout(2000);
-      await page.locator('input[type="text"]').fill(config.value);
-  }
-  else if (config.type === "date") {
+    await optionLocator.click();
+
+  } else if (config.type === "text") {
+    const input = page.locator('input[type="text"]');
+
     await row.getByRole("gridcell").nth(1).click();
-    await page.waitForTimeout(2000);
+    await input.waitFor({ state: "visible", timeout: 2000 });
+    await input.fill(config.value);
+    await input.press("Enter");
+
+  } else if (config.type === "date") {
+    await row.getByRole("gridcell").nth(1).click();
     await page.getByRole("gridcell", { name: "icon: calendar" }).click();
-    await page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) }).click();
+
+    const dateCell = page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) });
+    await dateCell.waitFor({ state: "visible", timeout: 2000 });
+    await dateCell.click();
   }
 }
   let a= 0;
     while (await page.getByRole('button', { name: 'Submit Quote' }).first().isVisible() && a < 2) {
       await page.getByRole('button', { name: 'Submit Quote' }).first().click();
-      await page.waitForTimeout(1000);
   a++;
   }
    await validateAndLog({
@@ -299,7 +306,7 @@ const vendor_bid_rfq_non_regret = async ({ page  , inline_non_regrets , mandator
   await page.getByRole('radio', { name: 'Indian Rupees (INR)' }).click();
   await page.getByRole('button', { name: 'Save' }).click();
   await page.waitForTimeout(1000);
-  // inline 
+
 for (let i = 0; i < inline_non_regrets.length; i++) {
   // scroll before every 2-row batch
   if (i % 1 === 0) {
@@ -307,55 +314,61 @@ for (let i = 0; i < inline_non_regrets.length; i++) {
     await page.mouse.wheel(300, 0);
     await page.waitForTimeout(800);
   }
-
   const [colIndex, rowIndex, value] = inline_non_regrets[i];
-  // click correct cell
-  await page.locator(`.rdg-row >> nth=${rowIndex} >> div:nth-child(${colIndex})`).click();
-  if(!(await page.locator('input[type="text"]').isVisible)){
-    await page.locator(`.rdg-row >> nth=${rowIndex} >> div:nth-child(${colIndex})`).dblclick();
+
+  // Use aria-colindex instead of nth-child
+  const cell = page.locator(`div[role="gridcell"][aria-colindex="${colIndex}"]`).nth(rowIndex);
+  const input = page.locator('input[type="text"]');
+
+  await cell.click();
+  if (!(await input.isVisible())) {
+    await cell.dblclick();
   }
 
-  // Fill the value
-  await page.locator('input[type="text"]').fill(value);
-  await page.locator('input[type="text"]').press("Enter");
+  await input.waitFor({ state: "visible", timeout: 2000 });
+  await input.fill(value);
+  await input.press("Enter");
 }
 
 for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   const row = page.getByRole("row", { name: field, exact: true });
-  await page.waitForTimeout(3000);
 
   if (config.type === "dropdown") {
     let retries = 0;
-    while (!(await page.getByRole("option").first().isVisible()) && retries < 3) {
+    const optionLocator = config.value === "first"
+      ? page.getByRole("option").first()
+      : page.getByRole("option", { name: config.value }).first();
+
+    // Retry opening dropdown until option is visible
+    while (!(await optionLocator.isVisible()) && retries < 3) {
       await row.getByRole("gridcell").nth(1).click();
-      await page.waitForTimeout(1000);
+      await optionLocator.waitFor({ state: "visible", timeout: 2000 }).catch(() => {});
       retries++;
     }
 
-    if (config.value === "first") {
-      await page.getByRole("option").first().click();
-      await page.waitForTimeout(2000);
-    } else {
-      await page.getByRole("option", { name: config.value }).first().click();
-      await page.waitForTimeout(2000);
-    }
-  }
-  else if (config.type === "text") {
-      await row.getByRole("gridcell").nth(1).click();
-      await page.waitForTimeout(2000);
-      await page.locator('input[type="text"]').fill(config.value);
-      await page.locator('input[type="text"]').press("Enter");
-  }
-  else if (config.type === "date") {
+    await optionLocator.click();
+
+  } else if (config.type === "text") {
+    const input = page.locator('input[type="text"]');
+
     await row.getByRole("gridcell").nth(1).click();
-    await page.waitForTimeout(2000);
+    await input.waitFor({ state: "visible", timeout: 2000 });
+    await input.fill(config.value);
+    await input.press("Enter");
+
+  } else if (config.type === "date") {
+    await row.getByRole("gridcell").nth(1).click();
     await page.getByRole("gridcell", { name: "icon: calendar" }).click();
-    await page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) }).click();
+
+    const dateCell = page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) });
+    await dateCell.waitFor({ state: "visible", timeout: 2000 });
+    await dateCell.click();
   }
 }
+
   let a= 0;
     while (await page.getByRole('button', { name: 'Submit Quote' }).first().isVisible() && a < 2) {
-      await page.getByRole('button', { name: 'Submit Quote' }).first().click();
+      await page.getByRole('button', { name: 'Submit Quote' }).first().dblclick();
       await page.waitForTimeout(1000);
   a++;
   }
