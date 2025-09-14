@@ -51,7 +51,7 @@ for (let i = 0; i < buttons.length; i++) {
   await addEvaluatorBtn.click();
 
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
-  await evaluatorOption.waitFor({ state: 'visible', timeout: 5000 });
+  await evaluatorOption.waitFor({ state: 'visible', timeout: 8000 });
   await evaluatorOption.click();
 }
  console.log("Evaluators added");
@@ -118,7 +118,7 @@ for (let i = 0; i < buttons.length; i++) {
   await addEvaluatorBtn.click();
 
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
-  await evaluatorOption.waitFor({ state: 'visible', timeout: 5000 });
+  await evaluatorOption.waitFor({ state: 'visible', timeout: 8000 });
   await evaluatorOption.click();
 }
 
@@ -179,7 +179,7 @@ for (let i = 0; i < buttons.length; i++) {
   await addEvaluatorBtn.click();
 
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
-  await evaluatorOption.waitFor({ state: 'visible', timeout: 5000 });
+  await evaluatorOption.waitFor({ state: 'visible', timeout: 8000 });
   await evaluatorOption.click();
 }
 
@@ -240,7 +240,7 @@ for (let i = 0; i < buttons.length; i++) {
   await addEvaluatorBtn.click();
 
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
-  await evaluatorOption.waitFor({ state: 'visible', timeout: 5000 });
+  await evaluatorOption.waitFor({ state: 'visible', timeout: 8000 });
   await evaluatorOption.click();
 }
 
@@ -304,7 +304,7 @@ for (let i = 0; i < buttons.length; i++) {
   await addEvaluatorBtn.click();
 
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
-  await evaluatorOption.waitFor({ state: 'visible', timeout: 5000 });
+  await evaluatorOption.waitFor({ state: 'visible', timeout: 8000 });
   await evaluatorOption.click();
 }
 

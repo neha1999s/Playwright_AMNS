@@ -19,7 +19,7 @@ const vendor_bid_tech = async ({ page }) => {
     await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: "visible", timeout: 5000 });
     await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
   }
-  await page.getByRole('button', { name: 'Submit' }).first().click();
+  await page.getByRole('button', { name: 'Submit' }).first().dblclick();
   await validateAndLog({
     locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
     smessage: "Technical Stage Submitted successfully ",

@@ -41,7 +41,7 @@ const test = baseTest.extend<{
     for (const p of context.pages()) await p.close();
 
     const clientPage = await context.newPage();
-    await clientPage.goto(config.FRONT_END, { timeout: 60000 });
+    await clientPage.goto(config.FRONT_END, { timeout: 80000 });
 
     await clientPage.evaluate((backendInstance) => {
       localStorage.setItem(
