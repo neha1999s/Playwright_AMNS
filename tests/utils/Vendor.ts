@@ -15,6 +15,7 @@ const vendor_bid_tech = async ({ page }) => {
   await page.locator('span').filter({ hasText: 'Don’t miss out on' }).locator('a').click();
   // Quick Fill (done twice)
   for (let i = 0; i < 2; i++) {
+    await page.getByText('Quick Fill').nth(i).waitFor({ state: "visible", timeout: 5000 });
     await page.getByText('Quick Fill').nth(i).dblclick();
     await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: "visible", timeout: 5000 });
     await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
@@ -41,6 +42,7 @@ const vendor_bid_tech_priceCap = async ({ page }) => {
   await page.locator('span').filter({ hasText: 'Don’t miss out on' }).locator('a').click();
   // Quick Fill (done twice)
   for (let i = 0; i < 2; i++) {
+    await page.getByText('Quick Fill').nth(i).waitFor({ state: "visible", timeout: 5000 });
     await page.getByText('Quick Fill').nth(i).dblclick();
     await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: "visible", timeout: 5000 });
     await page.getByRole('menuitem', { name: 'Same as Requested' }).dblclick();
