@@ -124,10 +124,10 @@ for (let i = 0; i < buttons.length; i++) {
 
  console.log("Evaluators added");
  await page.getByRole('tab', { name: 'RFQ' }).click();
-//  await page.getByRole('button', { name: 'Formula Template' }).click();
-//  await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template1, exact: true }).click();
-//  await page.getByRole('button', { name: 'Yes' }).click();
-//  console.log("RFQ Template selected");
+ await page.getByRole('button', { name: 'Formula Template' }).click();
+ await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template, exact: true }).click();
+ await page.getByRole('button', { name: 'Yes' }).click();
+ console.log("RFQ Template selected");
   // Vendor search
  const vendorCombobox = page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div');
  await vendorCombobox.first().click();
@@ -187,7 +187,7 @@ for (let i = 0; i < buttons.length; i++) {
  
  await page.getByRole('tab', { name: 'RFQ' }).click();
  await page.getByRole('button', { name: 'Formula Template' }).click();
- await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template1, exact: true }).click();
+ await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template, exact: true }).click();
  await page.getByRole('button', { name: 'Yes' }).click();
 
   // Vendor search
@@ -252,7 +252,7 @@ for (let i = 0; i < buttons.length; i++) {
  await page.getByRole('button', { name: 'Save' }).click();
 //  Add Template
  await page.getByRole('button', { name: 'Formula Template' }).click();
- await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template1, exact: true }).click();
+ await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template, exact: true }).click();
  await page.getByRole('button', { name: 'Yes' }).click();
   // Vendor search
  const vendorCombobox = page.getByRole('combobox').filter({ hasText: 'Search vendors you want to add' }).locator('div');

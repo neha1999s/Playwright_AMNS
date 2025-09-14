@@ -16,6 +16,7 @@ const vendor_bid_tech = async ({ page }) => {
   // Quick Fill (done twice)
   for (let i = 0; i < 2; i++) {
     await page.getByText('Quick Fill').nth(i).dblclick();
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: "visible", timeout: 5000 });
     await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
   }
   await page.getByRole('button', { name: 'Submit' }).first().click();
@@ -41,6 +42,7 @@ const vendor_bid_tech_priceCap = async ({ page }) => {
   // Quick Fill (done twice)
   for (let i = 0; i < 2; i++) {
     await page.getByText('Quick Fill').nth(i).dblclick();
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: "visible", timeout: 5000 });
     await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
   }
   await page.getByRole('button', { name: 'Submit' }).first().click();
@@ -217,6 +219,7 @@ const vendor_bid_tech_regret = async ({ page }) => {
   for (let i = 0; i < 2; i++) {
     await page.getByText('Quick Fill').nth(i).dblclick();
       if (i === 0) {
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: "visible", timeout: 5000 });
     await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
   } else {
     await page.getByRole('menuitem', { name: 'Regret Item' }).click();
@@ -369,7 +372,6 @@ for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   let a= 0;
     while (await page.getByRole('button', { name: 'Submit Quote' }).first().isVisible() && a < 2) {
       await page.getByRole('button', { name: 'Submit Quote' }).first().dblclick();
-      await page.waitForTimeout(1000);
   a++;
   }
    await validateAndLog({
