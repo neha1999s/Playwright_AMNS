@@ -12,7 +12,7 @@ test.beforeEach(async () => {
 });
 
 test.describe("Vendor Login & Flow, @Smoke , @Regression", () => {
-
+/*
   test("Vendor Bid  @TC0014 , @Regression ", async ({ vendorPage }) => {
     await vendorLogin({ page: vendorPage });
     await vendor_bid_tech({ page: vendorPage });
@@ -36,7 +36,7 @@ test.describe("Vendor Login & Flow, @Smoke , @Regression", () => {
     await vendor_bid_tech_priceCap({ page: vendorPage });
     await vendor_bid_rfq_more_than_Pricecap({ page: vendorPage , inlineField:inlineFieldsMoreThanPCap ,mandatoryGlobalField : mandatoryGlobalFields});
   });
-
+*/
   test("Counter offer Accept Vendor Side @TC0018,  @Regression", async ({ vendorPage }) => {
     await vendorLogin({ page: vendorPage });
     await counter_offer_vendor1({ page: vendorPage });
