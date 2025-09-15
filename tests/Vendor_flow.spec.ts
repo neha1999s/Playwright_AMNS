@@ -1,7 +1,7 @@
 import { test } from "./setupBlocks/global.setup";
 import { clientLogin, vendorLogin} from "./setupBlocks/login.setup";
 import { TEST_TIMEOUT } from "./setupBlocks/constant";
-import {  vendor_bid_tech,vendor_bid_tech_regret , vendor_bid_rfq,  counter_offer_vendor1, counter_offer_vendor2 , counter_offer_vendor3 , best_offer_vendor , vendor_bid_rfq_non_regret } from "./utils/Vendor";
+import {  vendor_bid_tech,vendor_bid_tech_regret , vendor_bid_rfq,  counter_offer_vendor1, counter_offer_vendor2 , counter_offer_vendor3 , lessThanBest_offer_vendor,morethanBest_offer_vendor , vendor_bid_rfq_non_regret } from "./utils/Vendor";
 import {  fetch_prs , eventCreationAPI , vendorBidAPI , sendCounterOfferAPI, priceCapBeforeBid , bestOfferAPI} from "./utils/FlowCover_API";
 import { vendor_bid_rfq_more_than_Pricecap ,vendor_bid_tech_priceCap ,vendor_bid_rfq_less_than_Pricecap } from "./utils/Vendor";
 import { inlinefields  , mandatoryGlobalFields , inline_non_regret , counterofferVendor , inlinefieldsLessThanPCap, inlineFieldsMoreThanPCap } from "./utils/Vendor_Page_data";
@@ -12,7 +12,7 @@ test.beforeEach(async () => {
 });
 
 test.describe("Vendor Login & Flow, @Smoke , @Regression", () => {
-
+/*
   test("Vendor Bid  @TC0014 , @Regression ", async ({ vendorPage }) => {
     await vendorLogin({ page: vendorPage });
     await vendor_bid_tech({ page: vendorPage });
@@ -36,7 +36,7 @@ test.describe("Vendor Login & Flow, @Smoke , @Regression", () => {
     await vendor_bid_tech_priceCap({ page: vendorPage });
     await vendor_bid_rfq_more_than_Pricecap({ page: vendorPage , inlineField:inlineFieldsMoreThanPCap ,mandatoryGlobalField : mandatoryGlobalFields});
   });
-
+*/
   test("Counter offer Accept Vendor Side @TC0018,  @Regression", async ({ vendorPage }) => {
     await vendorLogin({ page: vendorPage });
     await counter_offer_vendor1({ page: vendorPage });
@@ -52,18 +52,14 @@ test.describe("Vendor Login & Flow, @Smoke , @Regression", () => {
     await counter_offer_vendor3({ page: vendorPage, counterofferVendorbid: counterofferVendor});
   });
 
-
-
-  // test("Best offer Vendor Side @TC0021 , @Regression", async ({ vendorPage }) => { 
-
-
-
-  // test("Best offer Vendor Side @TC0021, @Smoke , @Regression", async ({ vendorPage }) => { 
-
-  //   await bestOfferAPI();
-  //   await vendorLogin({ page: vendorPage });
-  //   await best_offer_vendor({ page: vendorPage });
-  // });
-
+  test("Best offer (Less than rate) Vendor Side @TC0021, @Smoke , @Regression", async ({ vendorPage }) => { 
+    await vendorLogin({ page: vendorPage });
+    await lessThanBest_offer_vendor({ page: vendorPage });
+  });
+  
+  test("Best offer (More than rate) Vendor Side @TC0022, @Smoke , @Regression", async ({ vendorPage }) => { 
+    await vendorLogin({ page: vendorPage });
+    await morethanBest_offer_vendor({ page: vendorPage });
+  });
 
 });

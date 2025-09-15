@@ -1,10 +1,10 @@
 export const inlinefieldsLessThanPCap: [number, number, string][] = [
-  [7, 0, "20"], //row , box ,rate1
-  [7, 1, "30"], //row , box , rate2
-  [8, 0, "3"],  //row , box , linegst1
-  [8, 1, "3"],  //row , box , linegst2
-  [8, 0, "2"],  //row , box , deliverytime1
-  [8, 1, "2"],  //row , box , deliverytime2
+  [8, 0, "20"], //row , box ,rate1
+  [8, 1, "30"], //row , box , rate2
+  [11, 0, "3"],  //row , box , linegst1
+  [11, 1, "3"],  //row , box , linegst2
+  [13, 0, "2"],  //row , box , deliverytime1
+  [13, 1, "2"],  //row , box , deliverytime2
 ];
 
 export const mandatoryGlobalFields = {
@@ -18,27 +18,27 @@ export const mandatoryGlobalFields = {
 
 
 export const inlineFieldsMoreThanPCap: [number, number, string][] = [
-  [7, 0, "50"],
-  [7, 1, "60"],
-  [8, 0, "3"],
-  [8, 1, "3"],
-  [8, 0, "2"],
-  [8, 1, "2"],
+  [8, 0, "50"],
+  [8, 1, "60"],
+  [11, 0, "3"],
+  [11, 1, "3"],
+  [13, 0, "2"],
+  [13, 1, "2"],
 ];
 
 export const inlinefields: [number, number, string][] = [
-  [7, 0, "20"],
-  [7, 1, "30"],
-  [7, 0, "3"],
-  [7, 1, "3"],
-  [8, 0, "2"],
-  [8, 1, "2"],
+  [8, 0, "20"],
+  [8, 1, "30"],
+  [10, 0, "3"],
+  [10, 1, "3"],
+  [12, 0, "2"],
+  [12, 1, "2"],
 ];
 
  export const inline_non_regret: [number, number, string][] = [
-  [7, 0, "20"],
-  [9, 0, "3"],
-  [11, 0, "2"],
+  [8, 0, "20"],
+  [10, 0, "3"],
+  [12, 0, "2"],
 ];
 
 export const counterofferVendor = {
