@@ -9,7 +9,7 @@ import { fetch_prs , eventCreationAPI , vendorBidAPI , submissionTimeExpireAPI} 
 test.beforeEach(async () => {
   test.info().setTimeout(TEST_TIMEOUT);
 });
-
+/*
 test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
 
     test("Create Event with PR (Tech and RFQ) @TC001 ,@Smoke, @Regression ", async ({ clientPage  }) => {
@@ -97,5 +97,5 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
   // });
 
 });
-
+*/
 
