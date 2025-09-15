@@ -83,7 +83,7 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
     await best_offers({ page: clientPage });
   });
-
+/*
   // test("Auction Client Side @TC0012, @Smoke , @Regression", async ({ clientPage }) => { // baki h
   //   await clientLogin({ page: clientPage });
   //   await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
@@ -97,5 +97,5 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
   // });
 
 });
-
+*/
 
