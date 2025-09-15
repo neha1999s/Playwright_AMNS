@@ -9,9 +9,9 @@ import { fetch_prs , eventCreationAPI , vendorBidAPI , submissionTimeExpireAPI} 
 test.beforeEach(async () => {
   test.info().setTimeout(TEST_TIMEOUT);
 });
-/*
-test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
 
+test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
+/*
     test("Create Event with PR (Tech and RFQ) @TC001 ,@Smoke, @Regression ", async ({ clientPage  }) => {
     await clientLogin({ page: clientPage });
     await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
@@ -52,6 +52,7 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await pr_tech_RFQ({ page: clientPage });
     await publish_event_with_blank_title({ page: clientPage , eventCreation_detail: eventCreation_details  });
   });
+  */
 
   test("Surrogate Bid in Tech @TC007 ,@Smoke , @Regression", async ({ clientPage  }) => {
     await clientLogin({ page: clientPage });
@@ -83,7 +84,7 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
     await best_offers({ page: clientPage });
   });
-
+/*
   // test("Auction Client Side @TC0012, @Smoke , @Regression", async ({ clientPage }) => { // baki h
   //   await clientLogin({ page: clientPage });
   //   await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
