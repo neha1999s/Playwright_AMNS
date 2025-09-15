@@ -95,7 +95,7 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
   //   await clientPage.getByRole('menuitem', { name: 'Events' }).click();
   //   await convertToCBDAuction({ page: clientPage });
   // });
-
-});
 */
+});
+
 
