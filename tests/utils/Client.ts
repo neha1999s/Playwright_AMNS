@@ -41,7 +41,7 @@ const pr_tech_RFQ_API = async ({ page }) => {
 }
 
 const pr_selecting_by_UI = async ({ page }) => {
-  await page.getByRole('checkbox').first().waitFor({ state: "visible", timeout: 20000 });
+  await page.getByRole('checkbox').first().waitFor({ state: "visible", timeout: 50000 });
    for (let i = 0; i < 2; i++) {
   const checkbox = page.getByRole('checkbox').nth(i + 1);
 
@@ -181,6 +181,10 @@ await vendorOption.click();
 
  await page.getByRole('button', { name: 'Publish' }).click();
  await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
+//  const loader = page.locator('.ant-spin-dot').first();
+//  await loader.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}); 
+//  await loader.waitFor({ state: 'hidden', timeout: 50000 });
+
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -248,6 +252,9 @@ await vendorOption.click();
 
  await page.getByRole('button', { name: 'Publish' }).click();
  await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
+//   const loader = page.locator('.ant-spin-dot').first();
+//  await loader.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}); 
+//  await loader.waitFor({ state: 'hidden', timeout: 50000 });
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -325,6 +332,9 @@ for (let i = 0; i < buttons.length; i++) {
 await vendorOption.click();
 await page.getByRole('button', { name: 'Publish' }).click(); 
 await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
+//  const loader = page.locator('.ant-spin-dot').first();
+//  await loader.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}); 
+//  await loader.waitFor({ state: 'hidden', timeout: 50000 });
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -399,9 +409,12 @@ for (let i = 0; i < buttons.length; i++) {
  }
 
 // Select the vendor
-await vendorOption.click();
-await page.getByRole('button', { name: 'Publish' }).click(); 
-await page.getByLabel(title).getByRole('button', { name: 'Publish' }).dblclick();
+ await vendorOption.click();
+ await page.getByRole('button', { name: 'Publish' }).click(); 
+ await page.getByLabel(title).getByRole('button', { name: 'Publish' }).dblclick();
+//  const loader = page.locator('.ant-spin-dot').first();
+//  await loader.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}); 
+//  await loader.waitFor({ state: 'hidden', timeout: 50000 });
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -477,6 +490,9 @@ await vendorOption.click();
  await page.getByRole('textbox', { name: 'Enter the title of the project' }).clear();
  await page.getByRole('button', { name: 'Publish' }).click();
  await page.getByLabel('Publish Event').getByRole('button', { name: 'Publish' }).click();
+//  const loader = page.locator('.ant-spin-dot').first();
+//  await loader.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}); 
+//  await loader.waitFor({ state: 'hidden', timeout: 50000 });
 
  await validateAndLog({
     locator: page.getByText('Please fill project title!'),

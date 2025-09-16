@@ -14,43 +14,47 @@ const vendor_bid_tech = async ({ page }) => {
   await page.getByRole('tab', { name: 'Technical Stage' }).waitFor({ state: "visible", timeout: 10000 });
   await page.getByRole('tab', { name: 'Technical Stage' }).click();
   await page.waitForTimeout(2000);
+// --- Quick Fill for first 2 rows ---
+for (let i = 0; i < 2; i++) {
+  let retry = 0;
 
-  // --- Quick Fill for first 2 rows ---
-  for (let i = 0; i < 2; i++) {
-    let retry = 0;
-    while (retry < 3) {
-      if(await page.getByText('Quick Fill').nth(i).isVisible()) {
-        await page.getByText('Quick Fill').nth(i).click();
-      }
-      const menuItem = page.getByRole('menuitem', { name: 'Same as Requested' });
-      if (await menuItem.isVisible()) {
-        await menuItem.click();
-        break;
-      }
+  while (retry < 3) {
+    // Click Quick Fill button
+    await page.getByText('Quick Fill').nth(i).click();
 
+    const menuItem = page.getByRole('menuitem', { name: 'Same as Requested' });
+
+    try {
+      // Wait for dropdown to actually appear after Quick Fill
+      await menuItem.waitFor({ state: 'visible', timeout: 3000 });
+
+      await menuItem.click();
+
+      // Wait for toast after selection
+      await expect(page.getByText('Responses saved as per')).toBeVisible({
+        timeout: 5000,
+      });
+
+      break; // success → exit retry loop
+    } catch {
       retry++;
-      await page.waitForTimeout(1000); 
+      console.log(`Retrying Quick Fill at index ${i}, attempt ${retry}`);
+      await page.waitForTimeout(1000);
     }
   }
 
-const submitButton = page.getByRole('button', { name: 'Submit' }).nth(1) || page.getByRole('button', { name: 'Submit' }).first();
-const quickFill = page.getByText('Quick Fill').nth(1);
-
-try {
-
-  if (!(await submitButton.isEnabled())) {
-    await quickFill.click();
-    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-    // Wait until Submit is enabled after Quick Fill
-    await expect(submitButton).toBeEnabled({ timeout: 10000 });
-    await submitButton.dblclick();
-  } else {
-    await submitButton.dblclick();
+  if (retry === 3) {
+    throw new Error(`❌ Quick Fill failed at index ${i}`);
   }
-} catch {
-  throw new Error("Submit button is not enabled even after Quick Fill");
 }
-
+const submitButton = page.getByRole('button', { name: 'Submit' }).nth(1);
+let a=0;
+while (a<2){
+if (await submitButton.isEnabled()){
+await submitButton.dblclick();
+}
+a++;
+}
 await validateAndLog({
   locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
   smessage: "Technical Stage Submitted successfully ",
@@ -74,52 +78,42 @@ for (let i = 0; i < 2; i++) {
   let retry = 0;
 
   while (retry < 3) {
-  
+    // Click Quick Fill button
     await page.getByText('Quick Fill').nth(i).click();
+
     const menuItem = page.getByRole('menuitem', { name: 'Same as Requested' });
 
-    if (await menuItem.isVisible()) {
+    try {
+      // Wait for dropdown to actually appear after Quick Fill
+      await menuItem.waitFor({ state: 'visible', timeout: 3000 });
+
       await menuItem.click();
+
+      // Wait for toast after selection
       await expect(page.getByText('Responses saved as per')).toBeVisible({
         timeout: 5000,
       });
 
-      break;
+      break; // success → exit retry loop
+    } catch {
+      retry++;
+      console.log(`Retrying Quick Fill at index ${i}, attempt ${retry}`);
+      await page.waitForTimeout(1000);
     }
-
-    retry++;
-    await page.waitForTimeout(1000);
   }
 
   if (retry === 3) {
     throw new Error(`❌ Quick Fill failed at index ${i}`);
   }
 }
-
-
-const submitButton = page.getByRole('button', { name: 'Submit' }).first();
-const quickFill = page.getByText('Quick Fill').nth(1);
-
-try {
-
-  if (!(await submitButton.isEnabled())) {
-    await quickFill.click();
-    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-    await expect(submitButton).toBeEnabled({ timeout: 10000 });
-    await submitButton.click();
-  } else {
-    let a=0;
-    while (a<2){
-    if (await submitButton.isEnabled()){
-    await submitButton.click();
-    }
-    a++;
-    }
-  }
-} catch {
-  throw new Error("Submit button is not enabled even after Quick Fill");
+const submitButton = page.getByRole('button', { name: 'Submit' }).nth(1);
+let a=0;
+while (a<2){
+if (await submitButton.isEnabled()){
+await submitButton.dblclick();
 }
-
+a++;
+}
 await validateAndLog({
   locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
   smessage: "Technical Stage Submitted successfully ",
@@ -151,7 +145,7 @@ const vendor_bid_rfq_less_than_Pricecap = async ({ page ,inlinefield , mandatory
   await input.fill(value);
   await input.press("Enter");
 }
-
+// global
 for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   const row = page.getByRole("row", { name: field, exact: true });
 
@@ -222,7 +216,7 @@ const vendor_bid_rfq_more_than_Pricecap = async ({ page  , inlineField , mandato
   await input.fill(value);
   await input.press("Enter");
 }
-
+// global
 for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   const row = page.getByRole("row", { name: field, exact: true });
 
@@ -287,61 +281,58 @@ const vendor_bid_tech_regret = async ({ page }) => {
   const techTab = page.getByRole("tab", { name: "Technical Stage" });
   await techTab.waitFor({ state: "visible", timeout: 10000 });
   await techTab.click();
+  // Quick Fill 
   for (let i = 0; i < 2; i++) {
-    let success = false;
+  let retry = 0;
 
-    for (let retry = 0; retry < 3; retry++) {
-      await page.getByText("Quick Fill").nth(i).click();
+  while (retry < 3) {
+    // Click Quick Fill button
+    await page.getByText('Quick Fill').nth(i).click();
 
+    const menuItem =
+      i === 0
+        ? page.getByRole('menuitem', { name: 'Same as Requested' })
+        : page.getByRole('menuitem', { name: 'Regret Item' });
+
+    try {
+      // Wait for dropdown to appear and click
+      await menuItem.waitFor({ state: 'visible', timeout: 3000 });
+      await menuItem.click();
+
+      // Wait for the correct toast message
       if (i === 0) {
-        await page.getByRole("menuitem", { name: "Same as Requested" }).click();
-      } else {
-        await page.getByRole("menuitem", { name: "Regret Item" }).click();
-      }
-      try {
-        await page.getByText(/Responses saved as per/i)|| await page.getByText('Responses saved as regret').waitFor({
-          state: "visible",
+        await expect(page.getByText(/Responses saved as per/i)).toBeVisible({
           timeout: 5000,
         });
-        success = true;
-        break; 
-      } catch {
-        console.log(`Validation failed for Quick Fill ${i}, retrying...`);
+      } else {
+        await expect(page.getByText(/Responses saved as regret/i)).toBeVisible({
+          timeout: 5000,
+        });
       }
+
+      break; // success → exit retry loop
+    } catch {
+      retry++;
+      console.log(`Retrying Quick Fill at index ${i}, attempt ${retry}`);
       await page.waitForTimeout(1000);
     }
-
-    if (!success) {
-      throw new Error(`Quick Fill ${i} did not validate after retries`);
-    }
   }
 
-  // Submit
-  let attempts = 0;
-  const submitButton =
-    page.getByRole("button", { name: "Submit" }).nth(1) ||
-    page.getByRole("button", { name: "Submit" }).first();
+  if (retry === 3) {
+    throw new Error(`❌ Quick Fill failed at index ${i}`);
+  }
+}
 
-  try {
-  if (!(await submitButton.isEnabled())) {
-    await page.getByText("Quick Fill").nth(0).click();
-    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-    await expect(submitButton).toBeEnabled({ timeout: 10000 });
+// ---- Submit (same as your first code) ----
+const submitButton = page.getByRole('button', { name: 'Submit' }).nth(1);
+let a = 0;
+
+while (a < 2) {
+  if (await submitButton.isEnabled()) {
     await submitButton.dblclick();
   }
-  while (attempts < 2) {
-  if (await submitButton.isVisible() && await submitButton.isEnabled()) {
-    await submitButton.scrollIntoViewIfNeeded();
-    await submitButton.click({ force: true }); 
-    break; 
-  }
-  attempts++;
-  await page.waitForTimeout(1000); 
-}  
-  } catch {
-    throw new Error("Submit button is not enabled even after Quick Fill");
-  }
-
+  a++;
+}
   await validateAndLog({
     locator: page.getByRole("tab", { name: "Technical Stage Submitted" }),
     smessage: "✅ Technical Stage Submitted successfully",
