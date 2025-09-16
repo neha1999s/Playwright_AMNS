@@ -5,14 +5,13 @@ import {  vendor_bid_tech,vendor_bid_tech_regret , vendor_bid_rfq,  counter_offe
 import {  fetch_prs , eventCreationAPI , vendorBidAPI , sendCounterOfferAPI, priceCapBeforeBid , bestOfferAPI} from "./utils/FlowCover_API";
 import { vendor_bid_rfq_more_than_Pricecap ,vendor_bid_tech_priceCap ,vendor_bid_rfq_less_than_Pricecap } from "./utils/Vendor";
 import { inlinefields  , mandatoryGlobalFields , inline_non_regret , counterofferVendor , inlinefieldsLessThanPCap, inlineFieldsMoreThanPCap } from "./utils/Vendor_Page_data";
-// import { body} from "./utils/API_Body_data";
 
 test.beforeEach(async () => {
   test.info().setTimeout(TEST_TIMEOUT);
 });
 
 test.describe("Vendor Login & Flow, @Smoke , @Regression", () => {
-/*
+
   test("Vendor Bid  @TC0014 , @Regression ", async ({ vendorPage }) => {
     await vendorLogin({ page: vendorPage });
     await vendor_bid_tech({ page: vendorPage });
@@ -36,7 +35,7 @@ test.describe("Vendor Login & Flow, @Smoke , @Regression", () => {
     await vendor_bid_tech_priceCap({ page: vendorPage });
     await vendor_bid_rfq_more_than_Pricecap({ page: vendorPage , inlineField:inlineFieldsMoreThanPCap ,mandatoryGlobalField : mandatoryGlobalFields});
   });
-*/
+
   test("Counter offer Accept Vendor Side @TC0018,  @Regression", async ({ vendorPage }) => {
     await vendorLogin({ page: vendorPage });
     await counter_offer_vendor1({ page: vendorPage });

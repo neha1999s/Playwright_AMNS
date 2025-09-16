@@ -41,7 +41,7 @@ const test = baseTest.extend<{
     for (const p of context.pages()) await p.close();
 
     const clientPage = await context.newPage();
-    await clientPage.goto(config.FRONT_END, { timeout: 80000 });
+    await clientPage.goto(config.FRONT_END, { timeout: 100000 });
 
     await clientPage.evaluate((backendInstance) => {
       localStorage.setItem(
@@ -61,7 +61,7 @@ const test = baseTest.extend<{
     for (const p of context.pages()) await p.close();
 
     const vendorPage = await context.newPage();
-    await vendorPage.goto(config.FRONT_END, { timeout: 80000, waitUntil: "domcontentloaded"});
+    await vendorPage.goto(config.FRONT_END, { timeout: 100000, waitUntil: "domcontentloaded"});
     console.log("Navigated to:", config.FRONT_END);
 
     await vendorPage.evaluate((backendInstance) => {
@@ -71,7 +71,7 @@ const test = baseTest.extend<{
       );
     }, config.BACKEND_INSTANCE);
 
-    await vendorPage.reload({ waitUntil: "domcontentloaded", timeout: 20000 });
+    await vendorPage.reload({ waitUntil: "domcontentloaded", timeout: 30000 });
     await use(vendorPage);
   },
 });

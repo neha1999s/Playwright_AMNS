@@ -4,7 +4,7 @@ import { test } from "../setupBlocks/global.setup";
 import { fetch_prs , eventCreationAPI , vendorBidAPI , submissionTimeExpireAPI} from "./FlowCover_API";
 
 
-const pr_tech_RFQ = async ({ page }) => {
+const pr_tech_RFQ_API = async ({ page }) => {
 
   var latestPR = await fetch_prs();
   if (!latestPR) throw new Error('No PR retrieved from API');
@@ -12,11 +12,11 @@ const pr_tech_RFQ = async ({ page }) => {
   const cell = page.getByRole('cell', { name: latestPR }).nth(i);
   const checkbox = page.getByRole('checkbox').nth(i + 1);
 
-  if (await cell.isVisible()) {
+  if (await checkbox.isVisible()) {
     let retries = 0;
-    while (!(await checkbox.isChecked()) && retries < 5) { // max 5 retries
+    while (!(await checkbox.isChecked()) && retries < 5) { 
       await checkbox.click();
-      await page.waitForTimeout(500); // small wait before re-checking
+      await page.waitForTimeout(500); 
       retries++;
     }
 
@@ -40,20 +40,16 @@ const pr_tech_RFQ = async ({ page }) => {
   })
 }
 
-const pr_tech_auction = async ({ page  , eventCreation_detail  }) => {
-  const epochSeconds = Math.floor(Date.now() / 1000);
-  let title = String("Auto_AMNS_" + epochSeconds);
-  var latestPR = await fetch_prs();
-  if (!latestPR) throw new Error('No RFX ID retrieved from API');
- for (let i = 0; i < 2; i++) {
-  const cell = page.getByRole('cell', { name: latestPR }).nth(i);
+const pr_selecting_by_UI = async ({ page }) => {
+  await page.getByRole('checkbox').first().waitFor({ state: "visible", timeout: 20000 });
+   for (let i = 0; i < 2; i++) {
   const checkbox = page.getByRole('checkbox').nth(i + 1);
 
-  if (await cell.isVisible()) {
+  if (await checkbox.isVisible()) {
     let retries = 0;
-    while (!(await checkbox.isChecked()) && retries < 5) { // max 5 retries
+    while (!(await checkbox.isChecked()) && retries < 5) { 
       await checkbox.click();
-      await page.waitForTimeout(500); // small wait before re-checking
+      await page.waitForTimeout(500); 
       retries++;
     }
 
@@ -64,6 +60,49 @@ const pr_tech_auction = async ({ page  , eventCreation_detail  }) => {
     }
   }
 }
+}
+
+const pr_tech_RFQ_By_UI = async ({ page }) => {
+ await page.getByRole('checkbox').first().waitFor({ state: "visible", timeout: 50000 });
+ await pr_selecting_by_UI({ page });
+ await page.getByRole('button', { name: 'icon: shopping-cart Purchase' }).click();
+ await page.getByRole('button', { name: 'Create Project' }).click();
+ await page.getByRole('menuitem', { name: 'Technical Stage' }).click();
+ await page.getByRole('menuitem', { name: 'RFQ' }).click();
+ await page.getByRole('button', { name: 'Create Project' }).click();
+
+  await validateAndLog({
+    locator: page.getByText('Title:Add AttachmentsAdd T&'),
+    smessage: "Successfully redirected to project creation page"  ,
+    fmessage:  "Failed in redirected to project creation page"
+  })
+}
+
+const pr_tech_auction = async ({ page  , eventCreation_detail  }) => {
+  const epochSeconds = Math.floor(Date.now() / 1000);
+  let title = String("Auto_AMNS_" + epochSeconds);
+  await pr_selecting_by_UI({ page });
+//   var latestPR = await fetch_prs();
+//   if (!latestPR) throw new Error('No RFX ID retrieved from API');
+//  for (let i = 0; i < 2; i++) {
+//   const cell = page.getByRole('cell', { name: latestPR }).nth(i);
+//   const checkbox = page.getByRole('checkbox').nth(i + 1);
+
+//   if (await cell.isVisible()) {
+//     let retries = 0;
+//     while (!(await checkbox.isChecked()) && retries < 5) { // max 5 retries
+//       await checkbox.click();
+//       await page.waitForTimeout(500); // small wait before re-checking
+//       retries++;
+//     }
+
+//     if (await checkbox.isChecked()) {
+//       console.log(`✅ Checkbox at index ${i + 1} is checked`);
+//     } else {
+//       console.log(`❌ Failed to check checkbox at index ${i + 1}`);
+//     }
+//   }
+// }
  await page.getByRole('button', { name: 'icon: shopping-cart Purchase' }).click();
  await page.getByRole('button', { name: 'Create Project' }).click();
  await page.getByRole('menuitem', { name: 'Technical Stage' }).click();
@@ -78,7 +117,7 @@ const pr_tech_auction = async ({ page  , eventCreation_detail  }) => {
  await page.getByRole('button', { name: 'Save' }).click();
  await page.getByRole('button', { name: 'Select Templates' }).click();
  const templateOption = page.getByRole('menuitem', { name: eventCreation_detail.tech_template });
- await templateOption.waitFor({ state: 'visible', timeout: 10000 });
+ await templateOption.waitFor({ state: 'visible', timeout: 20000 });
  await templateOption.click();
  console.log("✅ Tech Template selected");
  
@@ -87,11 +126,25 @@ let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" 
 for (let i = 0; i < buttons.length; i++) {
   // Re-query button fresh each iteration
   const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
-  await addEvaluatorBtn.click();
-
+  const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" });
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
-  await evaluatorOption.waitFor({ state: 'visible', timeout: 10000 });
-  await evaluatorOption.click();
+  if (i === 0) {
+    await addEvaluatorBtn.waitFor({ state: 'visible', timeout: 20000 }); 
+    await addEvaluatorBtn.click();
+    await evaluatorOption.dblclick(); 
+  } 
+  if (i === 1) {
+    await page.locator('[data-test-id="virtuoso-scroller"]').hover();
+    await page.mouse.wheel(0,600);
+    await page.waitForTimeout(800);
+    await addEvaluatorBtn1.waitFor({ state: 'visible', timeout: 20000 });
+    await page.waitForTimeout(1000);
+    await addEvaluatorBtn1.click();
+    await evaluatorOption.dblclick();
+    break;
+  }
+  // await evaluatorOption.waitFor({ state: 'visible', timeout: 30000 });   
+  // await evaluatorOption.dblclick();
 }
  console.log("Evaluators added");
 
@@ -115,12 +168,12 @@ for (let i = 0; i < buttons.length; i++) {
  const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
 
  try {
-   await vendorOption.waitFor({ state: 'visible', timeout: 10000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
  } catch {
   // Retry if not visible
    await searchInput.clear();
    await searchInput.fill(eventCreation_detail.search_vendor);
-   await vendorOption.waitFor({ state: 'visible', timeout: 10000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
  }
 
 // Select the vendor
@@ -142,8 +195,8 @@ const qa_event_vendorwise = async ({ page  , eventCreation_detail}) => {
  await page.getByRole('tab', { name: 'Technical Stage' }).click();
   // Select Tech Template
 await page.locator('div', { hasText: /^Select Template$/ }).first().click();
-const templateOption = page.getByRole('menuitem', { name: eventCreation_detail.tech_template }).first();
-await templateOption.waitFor({ state: 'visible', timeout: 10000 });
+const templateOption = page.getByRole('menuitem', { name: eventCreation_detail.tech_template }).nth(0);;
+await templateOption.waitFor({ state: 'visible', timeout: 20000 });
 await templateOption.click();
 
 console.log("✅ Tech Template selected");
@@ -152,15 +205,19 @@ console.log("✅ Tech Template selected");
 let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
 for (let i = 0; i < buttons.length; i++) {
   // Re-query button fresh each iteration
-  const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
-  await addEvaluatorBtn.click();
-
-  const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
-  await evaluatorOption.waitFor({ state: 'visible', timeout: 10000 });
+  const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).nth(0);
+  const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator1 });
+  let retries = 0; 
+  while (!(await evaluatorOption.isVisible()) && retries < 5) { 
+    await addEvaluatorBtn.waitFor({ state: 'visible', timeout: 20000 }); 
+    await addEvaluatorBtn.click(); 
+    retries++; 
+}
+  await evaluatorOption.waitFor({ state: 'visible', timeout: 30000 });
   await evaluatorOption.click();
 }
-
  console.log("Evaluators added");
+
  await page.getByRole('tab', { name: 'RFQ' }).click();
  await page.getByRole('button', { name: 'Formula Template' }).click();
  await page.getByRole('menuitem', { name: eventCreation_detail.rfq_template, exact: true }).click();
@@ -178,12 +235,12 @@ for (let i = 0; i < buttons.length; i++) {
  const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
 
  try {
-   await vendorOption.waitFor({ state: 'visible', timeout: 10000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
  } catch {
   // Retry if not visible
    await searchInput.clear();
    await searchInput.fill(eventCreation_detail.search_vendor);
-   await vendorOption.waitFor({ state: 'visible', timeout: 10000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
  }
 
 // Select the vendor
@@ -208,7 +265,7 @@ const qa_event_lineitem = async ({ page , eventCreation_detail}) => {
  await page.getByRole('button', { name: 'Save' }).click();
  await page.getByRole('button', { name: 'Select Templates' }).click();
  const templateOption = page.getByRole('menuitem', { name: eventCreation_detail.tech_template });
- await templateOption.waitFor({ state: 'visible', timeout: 10000 });
+ await templateOption.waitFor({ state: 'visible', timeout: 20000 });
  await templateOption.click();
  console.log("✅ Tech Template selected");
 
@@ -217,13 +274,26 @@ let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" 
 for (let i = 0; i < buttons.length; i++) {
   // Re-query button fresh each iteration
   const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
-  await addEvaluatorBtn.click();
-
+  const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" });
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
-  await evaluatorOption.waitFor({ state: 'visible', timeout: 10000 });
-  await evaluatorOption.click();
+  if (i === 0) {
+    await addEvaluatorBtn.waitFor({ state: 'visible', timeout: 20000 }); 
+    await addEvaluatorBtn.click();
+    await evaluatorOption.dblclick(); 
+  } 
+  if (i === 1) {
+    await page.locator('[data-test-id="virtuoso-scroller"]').hover();
+    await page.mouse.wheel(0,600);
+    await page.waitForTimeout(800);
+    await addEvaluatorBtn1.waitFor({ state: 'visible', timeout: 20000 });
+    await page.waitForTimeout(1000);
+    await addEvaluatorBtn1.click();
+    await evaluatorOption.dblclick();
+    break;
+  }
+  // await evaluatorOption.waitFor({ state: 'visible', timeout: 30000 });   
+  // await evaluatorOption.dblclick();
 }
-
  console.log("Evaluators added");
  
  await page.getByRole('tab', { name: 'RFQ' }).click();
@@ -243,12 +313,12 @@ for (let i = 0; i < buttons.length; i++) {
  const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
 
  try {
-   await vendorOption.waitFor({ state: 'visible', timeout: 10000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
  } catch {
   // Retry if not visible
    await searchInput.clear();
    await searchInput.fill(eventCreation_detail.search_vendor);
-   await vendorOption.waitFor({ state: 'visible', timeout: 10000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
  }
 
 // Select the vendor
@@ -272,22 +342,32 @@ const qa_event_type_Auction = async ({ page  , eventCreation_detail}) => {
  await page.getByRole('button', { name: 'Save' }).click();
  await page.getByRole('button', { name: 'Select Templates' }).click();
  const templateOption = page.getByRole('menuitem', { name: eventCreation_detail.tech_template });
- await templateOption.waitFor({ state: 'visible', timeout: 10000 });
+ await templateOption.waitFor({ state: 'visible', timeout: 20000 });
  await templateOption.click();
  console.log("✅ Tech Template selected");
 
-// Line item - add evaluator
 let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
 for (let i = 0; i < buttons.length; i++) {
   // Re-query button fresh each iteration
   const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
-  await addEvaluatorBtn.click();
-
+  const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" });
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
-  await evaluatorOption.waitFor({ state: 'visible', timeout: 10000 });
-  await evaluatorOption.click();
+  if (i === 0) {
+    await addEvaluatorBtn.waitFor({ state: 'visible', timeout: 20000 }); 
+    await addEvaluatorBtn.click();
+    await evaluatorOption.dblclick(); 
+  } 
+  if (i === 1) {
+    await page.locator('[data-test-id="virtuoso-scroller"]').hover();
+    await page.mouse.wheel(0,600);
+    await page.waitForTimeout(800);
+    await addEvaluatorBtn1.waitFor({ state: 'visible', timeout: 20000 });
+    await page.waitForTimeout(1000);
+    await addEvaluatorBtn1.click();
+    await evaluatorOption.dblclick();
+    break;
+  }
 }
-
  console.log("Evaluators added");
  
  await page.getByRole('tab', { name: 'RFQ' }).click();
@@ -310,18 +390,18 @@ for (let i = 0; i < buttons.length; i++) {
  const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
 
  try {
-   await vendorOption.waitFor({ state: 'visible', timeout: 10000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
  } catch {
   // Retry if not visible
    await searchInput.clear();
    await searchInput.fill(eventCreation_detail.search_vendor);
-   await vendorOption.waitFor({ state: 'visible', timeout: 10000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
  }
 
 // Select the vendor
 await vendorOption.click();
 await page.getByRole('button', { name: 'Publish' }).click(); 
-await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
+await page.getByLabel(title).getByRole('button', { name: 'Publish' }).dblclick();
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -331,29 +411,38 @@ await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
 
 const publish_event_with_blank_title = async ({ page , eventCreation_detail }) => {
 
-//  await page.getByRole('textbox', { name: 'Enter the title of the project' }).clear();
  await page.getByRole('tab', { name: 'Technical Stage' }).click();
  await page.getByRole('button', { name: 'Technical Stage icon: right' }).click();
  await page.getByRole('radio', { name: 'I\'ll do line-item wise' }).click();
  await page.getByRole('button', { name: 'Save' }).click();
  await page.getByRole('button', { name: 'Select Templates' }).click();
  const templateOption = page.getByRole('menuitem', { name: eventCreation_detail.tech_template });
- await templateOption.waitFor({ state: 'visible', timeout: 10000 });
+ await templateOption.waitFor({ state: 'visible', timeout: 20000 });
  await templateOption.click();
  console.log("✅ Tech Template selected");
 
-// Line item - add evaluator
 let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" }).all();
 for (let i = 0; i < buttons.length; i++) {
   // Re-query button fresh each iteration
   const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
-  await addEvaluatorBtn.click();
-
+  const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" });
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
-  await evaluatorOption.waitFor({ state: 'visible', timeout: 10000 });
-  await evaluatorOption.click();
+  if (i === 0) {
+    await addEvaluatorBtn.waitFor({ state: 'visible', timeout: 20000 }); 
+    await addEvaluatorBtn.click();
+    await evaluatorOption.dblclick(); 
+  } 
+  if (i === 1) {
+    await page.locator('[data-test-id="virtuoso-scroller"]').hover();
+    await page.mouse.wheel(0,600);
+    await page.waitForTimeout(800);
+    await addEvaluatorBtn1.waitFor({ state: 'visible', timeout: 20000 });
+    await page.waitForTimeout(1000);
+    await addEvaluatorBtn1.click();
+    await evaluatorOption.dblclick();
+    break;
+  }
 }
-
  console.log("Evaluators added");
  
  await page.getByRole('tab', { name: 'RFQ' }).click();
@@ -374,12 +463,12 @@ for (let i = 0; i < buttons.length; i++) {
  const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
 
  try {
-   await vendorOption.waitFor({ state: 'visible', timeout: 10000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
  } catch {
   // Retry if not visible
    await searchInput.clear();
    await searchInput.fill(eventCreation_detail.search_vendor);
-   await vendorOption.waitFor({ state: 'visible', timeout: 10000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
  }
 
 // Select the vendor
@@ -492,7 +581,8 @@ for (let [field, config] of Object.entries(mandatoryglobalfield)) {
 }
 console.log("Mandatory Fields Filled");
 // finally submit
-await page.getByRole("button", { name: "Submit Quote" }).click();
+ await page.getByRole('button', { name: 'Next' }).click();
+ await page.getByRole('button', { name: 'Submit and Send' }).click();
   await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Bid placed on behalf of' }).nth(3),
     smessage: "Technical Stage Submitted successfully ",
@@ -655,4 +745,4 @@ const split_lot = async ({ page }) => {
   await page.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
   
 }
-export { convertToAuction ,convertToCBDAuction ,counter_offer, best_offers , price_cap_Client , qa_event_type_Auction , publish_event_with_blank_title, pr_tech_RFQ , pr_tech_auction , surrogate_bid_tech, surrogate_bid_RFQ, qa_event_vendorwise , qa_event_lineitem, test ,split_lot  };
+export { convertToAuction ,convertToCBDAuction ,counter_offer, best_offers , price_cap_Client , qa_event_type_Auction , publish_event_with_blank_title, pr_tech_RFQ_API,pr_tech_RFQ_By_UI, pr_tech_auction , surrogate_bid_tech, surrogate_bid_RFQ, qa_event_vendorwise , qa_event_lineitem, test ,split_lot  };

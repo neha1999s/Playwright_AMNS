@@ -3,7 +3,8 @@ export const eventCreation_details =
 { 
     
     tech_template: 'Vendor Details Template',
-    evaluator : 'First_name-116 Last_name-',
+    evaluator : 'First_name-474 Last_name-',
+    evaluator1 : 'First_name-116 Last_name-',
     rfq_template :'Buy Main Template Copy',
     // rfq_template1 :"Buy Main Template Copy 2",
     search_vendor :"312",

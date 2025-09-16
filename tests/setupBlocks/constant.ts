@@ -9,7 +9,7 @@ export function USERS(role) {
         FRONT_END: "https://client-main.preview.procol.tech/",
         BACKEND_INSTANCE: "qa-api",
         LOGIN_METHOD: "phone",
-        USER_MOBILE: "1000000102",
+        USER_MOBILE: "1000000104",
         OTP: "987321"
       };
     } else {
@@ -45,6 +45,6 @@ export function USERS(role) {
   throw new Error(`Invalid target (${ACTIVE_BACKEND}) or role`);
 }
 
-export const TEST_TIMEOUT = 120000;
+export const TEST_TIMEOUT = 180000;
 
 

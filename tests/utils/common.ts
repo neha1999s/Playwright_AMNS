@@ -1,6 +1,6 @@
 const validateAndLog = async ({ locator, smessage, fmessage }) => {
     try {
-      await locator.waitFor({ state: 'visible', timeout: 100000 }); // optional wait
+      await locator.waitFor({ state: 'visible', timeout: 80000 }); // optional wait
       if (await locator.isVisible()) {
         console.log(`✅ ${smessage}`);
       } else {

@@ -1,102 +1,131 @@
 import { validateAndLog } from "./common";
-import { test } from "../setupBlocks/global.setup";
+import { test , expect } from "../setupBlocks/global.setup";
 import { fetch_prs , eventCreationAPI , vendorBidAPI , sendCounterOfferAPI , priceCapBeforeBid , bestOfferAPI} from "./FlowCover_API";
 
 const vendor_bid_tech = async ({ page }) => {
-  const [ RFX_id , title ] = await eventCreationAPI();
-  if (!RFX_id  || !title) throw new Error('Missing RFX ID or title');
-  await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(RFX_id );
+  const [RFX_id, title] = await eventCreationAPI();
+  if (!RFX_id || !title) throw new Error('Missing RFX ID or title');
+
+  // Search and open event
+  await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(RFX_id);
   await page.getByLabel('icon: search').locator('svg').dblclick();
   await page.getByText(title).first().click();
   await page.getByRole('button', { name: 'I will participate' }).click();
   await page.getByRole('tab', { name: 'Technical Stage' }).waitFor({ state: "visible", timeout: 10000 });
   await page.getByRole('tab', { name: 'Technical Stage' }).click();
-  
-  // Quick Fill (done twice)
+  await page.waitForTimeout(2000);
+
+  // --- Quick Fill for first 2 rows ---
   for (let i = 0; i < 2; i++) {
-  //   let retries = 0;
-  //   // Retry opening dropdown until option is visible
-  //   while (!(await page.getByRole('menuitem', { name: 'Same as Requested' }).isVisible()) && retries < 5) {
-  //     await page.getByText('Quick Fill').nth(i).waitFor({ state: "visible", timeout: 10000 });
-  //     await page.getByText('Quick Fill').nth(i).click();
-  //     retries++;
-  // }
-  let a = 0;
-    // Retry opening dropdown until option is visible
-    while (!(await page.getByRole('gridcell', { name: 'Material Description' }).nth(i+2).isVisible()) && a < 5) {
-      await page.getByText('Quick Fill').nth(i).waitFor({ state: "visible", timeout: 10000 });
-      await page.getByText('Quick Fill').nth(i).click();
-      await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-      a++;
+    let retry = 0;
+    while (retry < 3) {
+      if(await page.getByText('Quick Fill').nth(i).isVisible()) {
+        await page.getByText('Quick Fill').nth(i).click();
+      }
+      const menuItem = page.getByRole('menuitem', { name: 'Same as Requested' });
+      if (await menuItem.isVisible()) {
+        await menuItem.click();
+        break;
+      }
+
+      retry++;
+      await page.waitForTimeout(1000); 
+    }
   }
-  // await page.getByRole('gridcell', { name: 'Material Description' }).nth(1)
-    // if(await page.getByRole('menuitem', { name: 'Same as Requested' }).isVisible()){
-    // await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-  // }
-  }
-  const submitButton = page.getByRole('button', { name: 'Submit' }).first();
-  const quickFill = page.getByText('Quick Fill').nth(1);
-  try {
-    if (!(await submitButton.isVisible())) {
+
+const submitButton = page.getByRole('button', { name: 'Submit' }).nth(1) || page.getByRole('button', { name: 'Submit' }).first();
+const quickFill = page.getByText('Quick Fill').nth(1);
+
+try {
+
+  if (!(await submitButton.isEnabled())) {
     await quickFill.click();
     await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-    await submitButton.waitFor({ state: 'visible', timeout: 10000 });
+    // Wait until Submit is enabled after Quick Fill
+    await expect(submitButton).toBeEnabled({ timeout: 10000 });
     await submitButton.dblclick();
-    }
-  } catch {
-    throw new Error("submitButton is not visible even after Quick Fill");
-  } finally {
-    await submitButton.dblclick();  
-  };
-  await validateAndLog({
-    locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
-    smessage: "Technical Stage Submitted successfully ",
-    fmessage:  "Technical Stage Submission failed" 
-}) 
+  } else {
+    await submitButton.dblclick();
+  }
+} catch {
+  throw new Error("Submit button is not enabled even after Quick Fill");
 }
+
+await validateAndLog({
+  locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
+  smessage: "Technical Stage Submitted successfully ",
+  fmessage: "Technical Stage Submission failed",
+});
+
+};
 
 const vendor_bid_tech_priceCap = async ({ page }) => {
   const [ RFX_id , title ] = await priceCapBeforeBid();
-  await page.waitForTimeout(1000);
   if (!RFX_id  || !title) throw new Error('Missing RFX ID or title');
   await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(RFX_id );
   await page.getByLabel('icon: search').locator('svg').dblclick();
   await page.getByText(title).first().click();
-  await page.waitForTimeout(3000);
   await page.getByRole('button', { name: 'I will participate' }).click();
-  await page.getByRole('tab', { name: 'Technical Stage' }).click();
   await page.getByRole('tab', { name: 'Technical Stage' }).waitFor({ state: "visible", timeout: 10000 });
-  await page.locator('span').filter({ hasText: 'Don’t miss out on' }).locator('a').click();
-  // Quick Fill (done twice)
-  for (let i = 0; i < 2; i++) {
-    let retries = 0;
-    // Retry opening dropdown until option is visible
-    while (!(await page.getByRole('menuitem', { name: 'Same as Requested' }).isVisible()) && retries < 3) {
-      await page.getByText('Quick Fill').nth(i).waitFor({ state: "visible", timeout: 10000 });
-      await page.getByText('Quick Fill').nth(i).click();
-      retries++;
+  await page.getByRole('tab', { name: 'Technical Stage' }).click();
+  await page.waitForTimeout(2000);
+  // --- Quick Fill for first 2 rows ---
+for (let i = 0; i < 2; i++) {
+  let retry = 0;
+
+  while (retry < 3) {
+  
+    await page.getByText('Quick Fill').nth(i).click();
+    const menuItem = page.getByRole('menuitem', { name: 'Same as Requested' });
+
+    if (await menuItem.isVisible()) {
+      await menuItem.click();
+      await expect(page.getByText('Responses saved as per')).toBeVisible({
+        timeout: 5000,
+      });
+
+      break;
     }
-  if(await page.getByRole('menuitem', { name: 'Same as Requested' }).isVisible()){
-      await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
+
+    retry++;
+    await page.waitForTimeout(1000);
   }
+
+  if (retry === 3) {
+    throw new Error(`❌ Quick Fill failed at index ${i}`);
   }
-  const submitButton = page.getByRole('button', { name: 'Submit' }).first();
-  const quickFill = page.getByText('Quick Fill').first();
-  try {
-  await submitButton.waitFor({ state: 'visible', timeout: 10000 });
-  await submitButton.dblclick();
-  } catch {
-  await quickFill.click();
-  await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-  await submitButton.waitFor({ state: 'visible', timeout: 10000 });
-  await submitButton.dblclick();
-  }
-  await validateAndLog({
-    locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
-    smessage: "Technical Stage Submitted successfully ",
-    fmessage:  "Technical Stage Submission failed" 
-}) 
 }
+
+
+const submitButton = page.getByRole('button', { name: 'Submit' }).first();
+const quickFill = page.getByText('Quick Fill').nth(1);
+
+try {
+
+  if (!(await submitButton.isEnabled())) {
+    await quickFill.click();
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
+    await expect(submitButton).toBeEnabled({ timeout: 10000 });
+    await submitButton.click();
+  } else {
+    let a=0;
+    while (a<2){
+    if (await submitButton.isEnabled()){
+    await submitButton.click();
+    }
+    a++;
+    }
+  }
+} catch {
+  throw new Error("Submit button is not enabled even after Quick Fill");
+}
+
+await validateAndLog({
+  locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
+  smessage: "Technical Stage Submitted successfully ",
+  fmessage: "Technical Stage Submission failed",
+});
+};
 
 const vendor_bid_rfq_less_than_Pricecap = async ({ page ,inlinefield , mandatoryGlobalField  }) => {
   await page.getByRole('tab', { name: 'RFQ' }).click();
@@ -112,8 +141,6 @@ const vendor_bid_rfq_less_than_Pricecap = async ({ page ,inlinefield , mandatory
     await page.waitForTimeout(800);
   }
   const [colIndex, rowIndex, value] = inlinefield[i];
-
-  // Use aria-colindex instead of nth-child
   const cell = page.locator(`div[role="gridcell"][aria-colindex="${colIndex}"]`).nth(rowIndex);
   const input = page.locator('input[type="text"]');
 
@@ -161,8 +188,8 @@ for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   }
 }
 let a= 0;
-    while (await page.getByRole('button', { name: 'Submit Quote' }).first().isVisible() && a < 2) {
-      await page.getByRole('button', { name: 'Submit Quote' }).first().dblclick();
+    while (await page.getByRole('button', { name: 'Submit Quote' }).first().isEnabled() && a < 2) {
+      await page.getByRole('button', { name: 'Submit Quote' }).first().click();
   a++;
   }
    await validateAndLog({
@@ -185,8 +212,6 @@ const vendor_bid_rfq_more_than_Pricecap = async ({ page  , inlineField , mandato
     await page.waitForTimeout(800);
   }
   const [colIndex, rowIndex, value] = inlineField[i];
-
-  // Use aria-colindex instead of nth-child
   const cell = page.locator(`div[role="gridcell"][aria-colindex="${colIndex}"]`).nth(rowIndex);
   const input = page.locator('input[type="text"]');
 
@@ -198,116 +223,6 @@ const vendor_bid_rfq_more_than_Pricecap = async ({ page  , inlineField , mandato
   await input.press("Enter");
 }
 
-for (let [field, config] of Object.entries(mandatoryGlobalField)) {
-  const row = page.getByRole("row", { name: field, exact: true });
-
-  if (config.type === "dropdown") {
-    let retries = 0;
-    const optionLocator = config.value === "first"
-      ? page.getByRole("option").first()
-      : page.getByRole("option", { name: config.value }).first();
-
-    // Retry opening dropdown until option is visible
-    while (!(await optionLocator.isVisible()) && retries < 3) {
-      await row.getByRole("gridcell").nth(1).click();
-      await optionLocator.waitFor({ state: "visible", timeout: 10000 }).catch(() => {});
-      retries++;
-    }
-    await optionLocator.click();
-
-  } else if (config.type === "text") {
-    const input = page.locator('input[type="text"]');
-
-    await row.getByRole("gridcell").nth(1).click();
-    await input.waitFor({ state: "visible", timeout: 10000 });
-    await input.fill(config.value);
-    await input.press("Enter");
-
-  } else if (config.type === "date") {
-    await row.getByRole("gridcell").nth(1).click();
-    await page.getByRole("gridcell", { name: "icon: calendar" }).click();
-
-    const dateCell = page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) });
-    await dateCell.waitFor({ state: "visible", timeout: 10000 });
-    await dateCell.click();
-  }
-}
-  let a= 0;
-    while (await page.getByRole('button', { name: 'Submit Quote' }).first().isVisible() && a < 2) {
-      await page.getByRole('button', { name: 'Submit Quote' }).first().dblclick();
-  a++;
-  }
-  const tooltip1 = page.getByRole('tooltip', { name: 'Net Price should be less than' });
-  const tooltip2 = page.getByText('Please enter valid responses');
-
-  await page.getByRole('gridcell', { name: '₹ 50 /KG' }).hover();
-  if (await tooltip1.isVisible() || await tooltip2.isVisible()) {
-  console.log('✅ Net Price is more than Price cap - Vendor Bid is not submitted ');
-  } else {
-  throw new Error('❌ Net Price is more than Price cap - Vendor Bid is  submitted  ');
-   }
-};
-
-const vendor_bid_tech_regret = async ({ page }) => {
-  var [ RFX_id , title ] = await eventCreationAPI();
-  await page.waitForTimeout(3000);
-  if (!RFX_id  || !title) throw new Error('Missing RFX ID or title');
-  await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(RFX_id );
-  await page.getByLabel('icon: search').locator('svg').dblclick();
-  await page.getByText(title).first().click();
-  await page.waitForTimeout(3000);
-  await page.getByRole('button', { name: 'I will participate' }).click();
-  await page.getByRole('tab', { name: 'Technical Stage' }).waitFor({ state: "visible", timeout: 10000 });
-  await page.getByRole('tab', { name: 'Technical Stage' }).click();
-  await page.locator('span').filter({ hasText: 'Don’t miss out on' }).locator('a').click();
-  // Quick Fill (done twice)
-    for (let i = 0; i < 2; i++) {
-    let retries = 0;
-    // Retry opening dropdown until option is visible
-    while (!(await page.getByRole('menuitem', { name: 'Same as Requested' }).isVisible()) && retries < 5) {
-      await page.getByText('Quick Fill').nth(i).waitFor({ state: "visible", timeout: 10000 });
-      await page.getByText('Quick Fill').nth(i).click();
-      retries++;
-    }
-  if (i === 0) {
-    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-  } else {
-    await page.getByRole('menuitem', { name: 'Regret Item' }).click();
-  }}
-  await page.getByRole('button', { name: 'Submit' }).first().dblclick();
-  await validateAndLog({
-    locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
-    smessage: "Technical Stage Submitted successfully ",
-    fmessage:  "Technical Stage Submission failed" 
-}) 
-}
-
-const vendor_bid_rfq = async ({ page  , inlinefieldrfq , mandatoryGlobalField}) => {
-  await page.getByRole('tab', { name: 'RFQ' }).click();
-  await page.getByRole('radio', { name: 'Indian Rupees (INR)' }).click();
-  await page.getByRole('button', { name: 'Save' }).click();
-  await page.locator('div[role="grid"]').first().waitFor({ state: "visible", timeout: 10000 });
-  // inline 
-for (let i = 0; i < inlinefieldrfq.length; i++) {
-  // scroll before every 2-row batch
-  if (i % 2 === 0) {
-    await page.locator('div[role="grid"]').first().hover();
-    await page.mouse.wheel(300, 0);
-    await page.waitForTimeout(800);
-  }
-  const [colIndex, rowIndex, value] = inlinefieldrfq[i];
-
-  // Use aria-colindex instead of nth-child
-  const cell = page.locator(`div[role="gridcell"][aria-colindex="${colIndex}"]`).nth(rowIndex);
-  const input = page.locator('input[type="text"]');
-
-  await cell.click();
-  if (!(await input.isVisible())) {
-    await cell.dblclick();
-  }
-  await input.fill(value);
-  await input.press("Enter");
-}
 for (let [field, config] of Object.entries(mandatoryGlobalField)) {
   const row = page.getByRole("row", { name: field, exact: true });
 
@@ -347,6 +262,156 @@ for (let [field, config] of Object.entries(mandatoryGlobalField)) {
       await page.getByRole('button', { name: 'Submit Quote' }).first().click();
   a++;
   }
+  const tooltip1 = page.getByRole('tooltip', { name: 'Net Price should be less than' });
+  const tooltip2 = page.getByText('Please enter valid responses');
+
+  await page.getByRole('gridcell', { name: '₹ 50 /KG' }).hover();
+  if (await tooltip1.isVisible() || await tooltip2.isVisible()) {
+  console.log('✅ Net Price is more than Price cap - Vendor Bid is not submitted ');
+  } else {
+  throw new Error('❌ Net Price is more than Price cap - Vendor Bid is  submitted  ');
+   }
+};
+
+const vendor_bid_tech_regret = async ({ page }) => {
+  const [RFX_id, title] = await eventCreationAPI();
+  await page.waitForTimeout(3000);
+  if (!RFX_id || !title) throw new Error("Missing RFX ID or title");
+
+  // Search Event
+  await page.getByRole("textbox", { name: "Search title or Ref-Id" }).fill(RFX_id);
+  await page.getByLabel("icon: search").locator("svg").dblclick();
+  await page.getByText(title).first().click();
+  await page.waitForTimeout(3000);
+  await page.getByRole("button", { name: "I will participate" }).click();
+  const techTab = page.getByRole("tab", { name: "Technical Stage" });
+  await techTab.waitFor({ state: "visible", timeout: 10000 });
+  await techTab.click();
+  for (let i = 0; i < 2; i++) {
+    let success = false;
+
+    for (let retry = 0; retry < 3; retry++) {
+      await page.getByText("Quick Fill").nth(i).click();
+
+      if (i === 0) {
+        await page.getByRole("menuitem", { name: "Same as Requested" }).click();
+      } else {
+        await page.getByRole("menuitem", { name: "Regret Item" }).click();
+      }
+      try {
+        await page.getByText(/Responses saved as per/i)|| await page.getByText('Responses saved as regret').waitFor({
+          state: "visible",
+          timeout: 5000,
+        });
+        success = true;
+        break; 
+      } catch {
+        console.log(`Validation failed for Quick Fill ${i}, retrying...`);
+      }
+      await page.waitForTimeout(1000);
+    }
+
+    if (!success) {
+      throw new Error(`Quick Fill ${i} did not validate after retries`);
+    }
+  }
+
+  // Submit
+  let attempts = 0;
+  const submitButton =
+    page.getByRole("button", { name: "Submit" }).nth(1) ||
+    page.getByRole("button", { name: "Submit" }).first();
+
+  try {
+  if (!(await submitButton.isEnabled())) {
+    await page.getByText("Quick Fill").nth(0).click();
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
+    await expect(submitButton).toBeEnabled({ timeout: 10000 });
+    await submitButton.dblclick();
+  }
+  while (attempts < 2) {
+  if (await submitButton.isVisible() && await submitButton.isEnabled()) {
+    await submitButton.scrollIntoViewIfNeeded();
+    await submitButton.click({ force: true }); 
+    break; 
+  }
+  attempts++;
+  await page.waitForTimeout(1000); 
+}  
+  } catch {
+    throw new Error("Submit button is not enabled even after Quick Fill");
+  }
+
+  await validateAndLog({
+    locator: page.getByRole("tab", { name: "Technical Stage Submitted" }),
+    smessage: "✅ Technical Stage Submitted successfully",
+    fmessage: "❌ Technical Stage Submission failed",
+  });
+};
+
+
+const vendor_bid_rfq = async ({ page  , inlinefieldrfq , mandatoryGlobalField}) => {
+  await page.getByRole('tab', { name: 'RFQ' }).click();
+  await page.getByRole('radio', { name: 'Indian Rupees (INR)' }).click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await page.locator('div[role="grid"]').first().waitFor({ state: "visible", timeout: 10000 });
+  // inline 
+for (let i = 0; i < inlinefieldrfq.length; i++) {
+  // scroll before every 2-row batch
+  if (i % 2 === 0) {
+    await page.locator('div[role="grid"]').first().hover();
+    await page.mouse.wheel(300, 0);
+    await page.waitForTimeout(800);
+  }
+  const [colIndex, rowIndex, value] = inlinefieldrfq[i];
+  const cell = page.locator(`div[role="gridcell"][aria-colindex="${colIndex}"]`).nth(rowIndex);
+  const input = page.locator('input[type="text"]');
+
+  await cell.click();
+  if (!(await input.isVisible())) {
+    await cell.dblclick();
+  }
+  await input.fill(value);
+  await input.press("Enter");
+}
+for (let [field, config] of Object.entries(mandatoryGlobalField)) {
+  const row = page.getByRole("row", { name: field, exact: true });
+
+  if (config.type === "dropdown") {
+    let retries = 0;
+    const optionLocator = config.value === "first"
+      ? page.getByRole("option").first()
+      : page.getByRole("option", { name: config.value }).first();
+    // Retry opening dropdown until option is visible
+    while (!(await optionLocator.isVisible()) && retries < 3) {
+      await row.getByRole("gridcell").nth(1).click();
+      await optionLocator.waitFor({ state: "visible", timeout: 10000 }).catch(() => {});
+      retries++;
+    }
+    await optionLocator.click();
+
+  } else if (config.type === "text") {
+    const input = page.locator('input[type="text"]');
+
+    await row.getByRole("gridcell").nth(1).click();
+    await input.waitFor({ state: "visible", timeout: 10000 });
+    await input.fill(config.value);
+    await input.press("Enter");
+
+  } else if (config.type === "date") {
+    await row.getByRole("gridcell").nth(1).click();
+    await page.getByRole("gridcell", { name: "icon: calendar" }).click();
+
+    const dateCell = page.locator("div").filter({ hasText: new RegExp(`^${config.value}$`) });
+    await dateCell.waitFor({ state: "visible", timeout: 10000 });
+    await dateCell.click();
+  }
+}
+  let a= 0;
+    while (await page.getByRole('button', { name: 'Submit Quote' }).nth(1).isVisible() && a < 2) {
+      await page.getByRole('button', { name: 'Submit Quote' }).nth(1).click();
+  a++;
+  }
    await validateAndLog({
     locator: page.getByRole('tab', { name: 'RFQ Submitted' }),
     smessage: "RFQ Submitted successfully ",
@@ -368,8 +433,6 @@ for (let i = 0; i < inline_non_regrets.length; i++) {
     await page.waitForTimeout(800);
   }
   const [colIndex, rowIndex, value] = inline_non_regrets[i];
-
-  // Use aria-colindex instead of nth-child
   const cell = page.locator(`div[role="gridcell"][aria-colindex="${colIndex}"]`).nth(rowIndex);
   const input = page.locator('input[type="text"]');
 
@@ -416,10 +479,10 @@ for (let [field, config] of Object.entries(mandatoryGlobalField)) {
     await dateCell.click();
   }
 }
-
-  let a= 0;
-    while (await page.getByRole('button', { name: 'Submit Quote' }).first().isVisible() && a < 2) {
-      await page.getByRole('button', { name: 'Submit Quote' }).first().dblclick();
+let a= 0;
+    while (await page.getByRole('button', { name: 'Submit Quote' }).first().isEnabled() && a < 2) {
+      await page.getByRole('button', { name: 'Submit Quote' }).first().waitFor({ state: "visible", timeout: 20000 });
+      await page.getByRole('button', { name: 'Submit Quote' }).first().dblclick();    
   a++;
   }
    await validateAndLog({
@@ -513,7 +576,17 @@ const lessThanBest_offer_vendor = async ({ page }) => {
   await page.getByRole('gridcell', { name: '₹ 30 /KG' }).dblclick();
   await page.locator('input[type="text"]').fill("25");
   await page.locator('input[type="text"]').press("Enter");
-  await page.getByRole('button', { name: 'Revise Quote' }).click();
+  await page.getByRole('button', { name: 'Revise Quote' }).first().click();
+  await page.locator('div').filter({ hasText: 'Bid not found' }).nth(3).waitFor({ state: "visible", timeout: 10000 });
+  // In case of 'Bid not found' error, retry once
+  if (await page.locator('div').filter({ hasText: 'Bid not found' }).nth(3).isVisible()){
+    await page.reload();
+    await page.getByRole('gridcell', { name: '₹ 30 /KG' }).waitFor({ state: "visible", timeout: 10000 });
+    await page.getByRole('gridcell', { name: '₹ 30 /KG' }).dblclick();
+    await page.locator('input[type="text"]').fill("25");
+    await page.locator('input[type="text"]').press("Enter");
+    await page.getByRole('button', { name: 'Revise Quote' }).first().click();
+  }
     await validateAndLog({
     locator: page.getByText('Bid revised successfully!'),
     smessage: "Best offer  bid sent to Vendor successfully ",
@@ -535,7 +608,7 @@ const morethanBest_offer_vendor = async ({ page }) => {
   await page.locator('input[type="text"]').fill("45");
   await page.locator('input[type="text"]').press("Enter");
   await page.getByRole('button', { name: 'Revise Quote' }).first().click();
-  
+
   const tooltip1 = page.getByRole('tooltip', { name: 'You cannot increase price' });
   const tooltip2 = page.getByText('Please enter valid responses');
 
