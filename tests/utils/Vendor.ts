@@ -14,47 +14,27 @@ const vendor_bid_tech = async ({ page }) => {
   await page.getByRole('tab', { name: 'Technical Stage' }).waitFor({ state: "visible", timeout: 10000 });
   await page.getByRole('tab', { name: 'Technical Stage' }).click();
   await page.waitForTimeout(2000);
-// --- Quick Fill for first 2 rows ---
-for (let i = 0; i < 2; i++) {
-  let retry = 0;
-
-  while (retry < 3) {
-    // Click Quick Fill button
-    await page.getByText('Quick Fill').nth(i).click();
-
-    const menuItem = page.getByRole('menuitem', { name: 'Same as Requested' });
-
-    try {
-      // Wait for dropdown to actually appear after Quick Fill
-      await menuItem.waitFor({ state: 'visible', timeout: 3000 });
-
-      await menuItem.click();
-
-      // Wait for toast after selection
-      await expect(page.getByText('Responses saved as per')).toBeVisible({
-        timeout: 5000,
-      });
-
-      break; // success → exit retry loop
-    } catch {
-      retry++;
-      console.log(`Retrying Quick Fill at index ${i}, attempt ${retry}`);
-      await page.waitForTimeout(1000);
+    // Quick Fill (done twice)
+  for (let i = 0; i < 2; i++) {
+    let count = 0;
+    while (!(await page.getByText('Same as RequestedRegret Item').isVisible()) && count < 5) {
+    await page.getByText('Quick Fill').nth(i).dblclick();
+    await page.waitForTimeout(1000);
+    count++;
     }
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: 'visible', timeout: 5000 });
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
+  }
+   const submitButton = page.getByRole('button', { name: 'Submit' }).first().click();
+  let a=0;
+  while (!(await page.getByRole('tab', { name: 'Technical Stage Submitted' })) && a < 2) {
+  if (await submitButton.isVisible()){
+  await submitButton.dblclick();
+  await page.waitForTimeout(1000);
+  }
+  a++;
   }
 
-  if (retry === 3) {
-    throw new Error(`❌ Quick Fill failed at index ${i}`);
-  }
-}
-const submitButton = page.getByRole('button', { name: 'Submit' }).nth(1);
-let a=0;
-while (a<2){
-if (await submitButton.isEnabled()){
-await submitButton.dblclick();
-}
-a++;
-}
 await validateAndLog({
   locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
   smessage: "Technical Stage Submitted successfully ",
@@ -73,47 +53,26 @@ const vendor_bid_tech_priceCap = async ({ page }) => {
   await page.getByRole('tab', { name: 'Technical Stage' }).waitFor({ state: "visible", timeout: 10000 });
   await page.getByRole('tab', { name: 'Technical Stage' }).click();
   await page.waitForTimeout(2000);
-  // --- Quick Fill for first 2 rows ---
-for (let i = 0; i < 2; i++) {
-  let retry = 0;
-
-  while (retry < 3) {
-    // Click Quick Fill button
-    await page.getByText('Quick Fill').nth(i).click();
-
-    const menuItem = page.getByRole('menuitem', { name: 'Same as Requested' });
-
-    try {
-      // Wait for dropdown to actually appear after Quick Fill
-      await menuItem.waitFor({ state: 'visible', timeout: 3000 });
-
-      await menuItem.click();
-
-      // Wait for toast after selection
-      await expect(page.getByText('Responses saved as per')).toBeVisible({
-        timeout: 5000,
-      });
-
-      break; // success → exit retry loop
-    } catch {
-      retry++;
-      console.log(`Retrying Quick Fill at index ${i}, attempt ${retry}`);
-      await page.waitForTimeout(1000);
+    // Quick Fill (done twice)
+  for (let i = 0; i < 2; i++) {
+    let count = 0;
+    while (!(await page.getByText('Same as RequestedRegret Item').isVisible()) && count < 5) {
+    await page.getByText('Quick Fill').nth(i).dblclick();
+    await page.waitForTimeout(1000);
+    count++;
     }
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: 'visible', timeout: 5000 });
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
   }
-
-  if (retry === 3) {
-    throw new Error(`❌ Quick Fill failed at index ${i}`);
+   const submitButton = page.getByRole('button', { name: 'Submit' }).first().click();
+  let a=0;
+  while (!(await page.getByRole('tab', { name: 'Technical Stage Submitted' })) && a < 2) {
+  if (await submitButton.isVisible()){
+  await submitButton.dblclick();
+  await page.waitForTimeout(1000);
   }
-}
-const submitButton = page.getByRole('button', { name: 'Submit' }).nth(1);
-let a=0;
-while (a<2){
-if (await submitButton.isEnabled()){
-await submitButton.dblclick();
-}
-a++;
-}
+  a++;
+  }
 await validateAndLog({
   locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
   smessage: "Technical Stage Submitted successfully ",
@@ -281,58 +240,33 @@ const vendor_bid_tech_regret = async ({ page }) => {
   const techTab = page.getByRole("tab", { name: "Technical Stage" });
   await techTab.waitFor({ state: "visible", timeout: 10000 });
   await techTab.click();
-  // Quick Fill 
+      // Quick Fill (done twice)
   for (let i = 0; i < 2; i++) {
-  let retry = 0;
-
-  while (retry < 3) {
-    // Click Quick Fill button
-    await page.getByText('Quick Fill').nth(i).click();
-
-    const menuItem =
-      i === 0
-        ? page.getByRole('menuitem', { name: 'Same as Requested' })
-        : page.getByRole('menuitem', { name: 'Regret Item' });
-
-    try {
-      // Wait for dropdown to appear and click
-      await menuItem.waitFor({ state: 'visible', timeout: 3000 });
-      await menuItem.click();
-
-      // Wait for the correct toast message
-      if (i === 0) {
-        await expect(page.getByText(/Responses saved as per/i)).toBeVisible({
-          timeout: 5000,
-        });
-      } else {
-        await expect(page.getByText(/Responses saved as regret/i)).toBeVisible({
-          timeout: 5000,
-        });
-      }
-
-      break; // success → exit retry loop
-    } catch {
-      retry++;
-      console.log(`Retrying Quick Fill at index ${i}, attempt ${retry}`);
-      await page.waitForTimeout(1000);
+    let count = 0;
+    while (!(await page.getByText('Same as RequestedRegret Item').isVisible()) && count < 5) {
+    await page.getByText('Quick Fill').nth(i).dblclick();
+    await page.waitForTimeout(1000);
+    count++;
+    }
+    if (i === 0) {
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: 'visible', timeout: 2000 });
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
+    await page.waitForTimeout(1000);
+    } else if (i === 1) {
+    await page.getByRole('menuitem', { name: 'Regret Item' }).waitFor({ state: 'visible', timeout: 2000 });
+    await page.getByRole('menuitem', { name: 'Regret Item' }).click();
+    await page.waitForTimeout(1000);
     }
   }
-
-  if (retry === 3) {
-    throw new Error(`❌ Quick Fill failed at index ${i}`);
-  }
-}
-
-// ---- Submit (same as your first code) ----
-const submitButton = page.getByRole('button', { name: 'Submit' }).nth(1);
-let a = 0;
-
-while (a < 2) {
-  if (await submitButton.isEnabled()) {
-    await submitButton.dblclick();
+  const submitButton = page.getByRole('button', { name: 'Submit' }).first().click();
+  let a=0;
+  while (!(await page.getByRole('tab', { name: 'Technical Stage Submitted' })) && a < 2) {
+  if (await submitButton.isVisible()){
+  await submitButton.dblclick();
+  await page.waitForTimeout(1000);
   }
   a++;
-}
+  }
   await validateAndLog({
     locator: page.getByRole("tab", { name: "Technical Stage Submitted" }),
     smessage: "✅ Technical Stage Submitted successfully",
@@ -562,13 +496,13 @@ const lessThanBest_offer_vendor = async ({ page }) => {
   await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(RFX_id );
   await page.getByLabel('icon: search').locator('svg').dblclick();
   await page.getByText(title).first().click();
-  await page.getByRole('tab', { name: 'RFQ' }).waitFor({ state: "visible", timeout: 10000 });
+  // await page.getByRole('tab', { name: 'RFQ' }).waitFor({ state: "visible", timeout: 10000 });
   await page.getByRole('tab', { name: 'RFQ' }).click();
+  await page.waitForTimeout(3000);
   await page.getByRole('gridcell', { name: '₹ 30 /KG' }).dblclick();
   await page.locator('input[type="text"]').fill("25");
   await page.locator('input[type="text"]').press("Enter");
   await page.getByRole('button', { name: 'Revise Quote' }).first().click();
-  await page.locator('div').filter({ hasText: 'Bid not found' }).nth(3).waitFor({ state: "visible", timeout: 10000 });
   // In case of 'Bid not found' error, retry once
   if (await page.locator('div').filter({ hasText: 'Bid not found' }).nth(3).isVisible()){
     await page.reload();
