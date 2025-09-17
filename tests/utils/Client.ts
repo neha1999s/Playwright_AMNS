@@ -680,18 +680,18 @@ const convertToAuction = async ({ page }) => {
   await page.getByRole('textbox', { name: 'Search Title' }).click();
   await page.getByRole('textbox', { name: 'Search Title' }).fill(RFX_id)
   await page.getByRole('textbox', { name: 'Search Title' }).press("Enter");
-  await page.getByText("Auto_Event_Creation_1757419659").first().click();
+  await page.getByText(title).first().click();
   await page.getByRole('tab', { name: 'RFQ' }).click();
   await page.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
   await page.getByRole('menuitem', { name: 'Convert to Auction' }).click();
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.waitForTimeout(3000);
-  let k = 0;
-    while (!await page.locator('div').filter({ hasText: /^Configuration for Event$/ }).first().isVisible() && k < 5) {
-      await page.locator('[aria-label="icon: right"]').first().dblclick();
-      await page.waitForTimeout(1000);
-  k++;
-  }
+  // wait for new tab and overwrite page
+  [page] = await Promise.all([
+  page.context().waitForEvent("page"),
+  page.getByRole('button', { name: 'Continue' }).click()
+  ]);
+  await page.waitForLoadState('domcontentloaded');
+  await page.waitForTimeout(2000);
+  await page.getByRole('button', { name: 'Rank on line icon: right' }).click();
   await page.getByRole('checkbox', { name: 'Enable Cost Breakdown Mode' }).click();
   await page.locator('span').filter({ hasText: 'Dynamic Event Extension' }).getByLabel('').click();
   await page.getByRole('button', { name: 'Save' }).click();
@@ -718,19 +718,17 @@ const convertToCBDAuction = async ({ page }) => {
   await page.getByRole('tab', { name: 'RFQ' }).click();
   await page.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
   await page.getByRole('menuitem', { name: 'Convert to Auction' }).click();
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.waitForTimeout(3000);
-  // await page.getByRole('button', { name: 'Rank on line icon: right' }).click();
-  // await page.getByRole('checkbox', { name: 'Enable Cost Breakdown Mode' }).click();
-  // await page.locator('span').filter({ hasText: 'Dynamic Event Extension' }).getByLabel('').click();
-  // await page.getByRole('button', { name: 'Save' }).click();
-    let k = 0;
-    while (!await page.getByRole('button', { name: 'Send to Auction Team', exact: true }).isVisible() && k < 3) {
-      await page.locator('button.ant-btn.ant-btn-primary >> text=Send to Auction team').click();
-
-      await page.waitForTimeout(1000);
-  k++;
-  }
+  // wait for new tab and overwrite page
+  [page] = await Promise.all([
+  page.context().waitForEvent("page"),
+  page.getByRole('button', { name: 'Continue' }).click()
+  ]);
+  await page.waitForLoadState('domcontentloaded');
+  await page.waitForTimeout(2000);
+  await page.getByRole('button', { name: 'Rank on line icon: right' }).click();
+  await page.locator('span').filter({ hasText: 'Dynamic Event Extension' }).getByLabel('').click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await page.getByRole('button', { name: 'Send to Auction team' }).click();
   await page.getByRole('button', { name: 'Send to Auction Team', exact: true }).click();
   await page.waitForTimeout(1000);
     await validateAndLog({

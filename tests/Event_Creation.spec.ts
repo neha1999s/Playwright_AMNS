@@ -76,19 +76,19 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
     await best_offers({ page: clientPage });
   });
-/*
-  // test("Auction Client Side @TC0012 , @Regression", async ({ clientPage }) => { 
-  //   await clientLogin({ page: clientPage });
-  //   await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
-  //   await convertToAuction({ page: clientPage });
-  // });
+
+  test("Auction Client Side @TC0012 , @Regression", async ({ clientPage }) => { 
+    await clientLogin({ page: clientPage });
+    await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
+    await convertToAuction({ page: clientPage });
+  });
 
   // test("CBD Auction Client Side @TC0013 , @Regression", async ({ clientPage }) => {
   //   await clientLogin({ page: clientPage });
   //   await clientPage.getByRole('menuitem', { name: 'Events' }).click();
   //   await convertToCBDAuction({ page: clientPage });
   // });
-*/
+
 });
 
 
