@@ -126,7 +126,7 @@ let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" 
 for (let i = 0; i < buttons.length; i++) {
   // Re-query button fresh each iteration
   const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
-  const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" });
+  const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" }).nth(1);
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
   if (i === 0) {
     await addEvaluatorBtn.waitFor({ state: 'visible', timeout: 20000 }); 
@@ -724,13 +724,14 @@ const convertToCBDAuction = async ({ page }) => {
   page.getByRole('button', { name: 'Continue' }).click()
   ]);
   await page.waitForLoadState('domcontentloaded');
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(3000);
   await page.getByRole('button', { name: 'Rank on line icon: right' }).click();
   await page.locator('span').filter({ hasText: 'Dynamic Event Extension' }).getByLabel('').click();
   await page.getByRole('button', { name: 'Save' }).click();
   await page.getByRole('button', { name: 'Send to Auction team' }).click();
+  await page.getByRole('button', { name: 'Send to Auction Team', exact: true }).waitFor({ state: 'visible' });
   await page.getByRole('button', { name: 'Send to Auction Team', exact: true }).click();
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(500);
     await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'RFQ sent to Auction Team' }).nth(3),
     smessage: "RFQ sent to Auction Team successfully ",

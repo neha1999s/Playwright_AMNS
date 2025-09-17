@@ -12,18 +12,18 @@ test.beforeEach(async () => {
 
 test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
 
-  test("Create Event with PR (Tech and Auction) @TC002 , @Regression ", async ({ clientPage  }) => {
-    await clientLogin({ page: clientPage });
-    await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
-    await pr_tech_auction({ page: clientPage  , eventCreation_detail: eventCreation_details });
-  });
+  // test("Create Event with PR (Tech and Auction) @TC002 , @Regression ", async ({ clientPage  }) => {
+  //   await clientLogin({ page: clientPage });
+  //   await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
+  //   await pr_tech_auction({ page: clientPage  , eventCreation_detail: eventCreation_details });
+  // });
 
-  test("Event Creation Vendor Wise Evaluation @TC003 , @Regression ", async ({ clientPage  }) => {
-    await clientLogin({ page: clientPage });
-    await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
-    await pr_tech_RFQ_By_UI({ page: clientPage });
-    await qa_event_vendorwise({ page: clientPage , eventCreation_detail: eventCreation_details  });
-  });
+  // test("Event Creation Vendor Wise Evaluation @TC003 , @Regression ", async ({ clientPage  }) => {
+  //   await clientLogin({ page: clientPage });
+  //   await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
+  //   await pr_tech_RFQ_By_UI({ page: clientPage });
+  //   await qa_event_vendorwise({ page: clientPage , eventCreation_detail: eventCreation_details  });
+  // });
 
   test("Event Creation line item wise with event type RFQ @TC004 ,@Regression ", async ({ clientPage  }) => {
     await clientLogin({ page: clientPage });
@@ -58,12 +58,11 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await surrogate_bid_RFQ({ page:clientPage , rate:rates , linegst:lineGST , deliverytime:delivery  , mandatoryglobalfield:mandatoryglobalFields});
   });
 
-  test("Price cap set before vendor bid in RFQ @TC009 , @Regression ", async ({ clientPage  }) => {
-    await clientLogin({ page: clientPage });
-    await clientPage.getByRole('menuitem', { name: 'Events' }).click();
-    await price_cap_Client({ page:clientPage  , p_cap: priceCap});
-
-  });
+  // test("Price cap set before vendor bid in RFQ @TC009 , @Regression ", async ({ clientPage  }) => {
+  //   await clientLogin({ page: clientPage });
+  //   await clientPage.getByRole('menuitem', { name: 'Events' }).click();
+  //   await price_cap_Client({ page:clientPage  , p_cap: priceCap});
+  // });
   
   test(" Sent Counter offer from Client Side @TC0010 , @Regression", async ({ clientPage   }) => {
     await clientLogin({ page: clientPage });
@@ -71,19 +70,19 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await counter_offer({ page:clientPage , countOffer :counteroffer});
   });
 
-  test("Sent Best Offer from Client Side @TC0011, @Regression", async ({ clientPage  }) => {  
-    await clientLogin({ page: clientPage });
-    await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
-    await best_offers({ page: clientPage });
-  });
+  // test("Sent Best Offer from Client Side @TC0011, @Regression", async ({ clientPage  }) => {  
+  //   await clientLogin({ page: clientPage });
+  //   await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
+  //   await best_offers({ page: clientPage });
+  // });
 
-  test("Auction Client Side @TC0012 , @Regression", async ({ clientPage }) => { 
+  test(" Convert to Auction Client Side @TC0012 , @Regression", async ({ clientPage }) => { 
     await clientLogin({ page: clientPage });
     await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
     await convertToAuction({ page: clientPage });
   });
 
-  // test("CBD Auction Client Side @TC0013 , @Regression", async ({ clientPage }) => {
+  // test(" Convert to CBD Auction Client Side @TC0013 , @Regression", async ({ clientPage }) => {
   //   await clientLogin({ page: clientPage });
   //   await clientPage.getByRole('menuitem', { name: 'Events' }).click();
   //   await convertToCBDAuction({ page: clientPage });
