@@ -510,10 +510,12 @@ const counter_offer_vendor3 = async ({ page , counterofferVendorbid}) => {
   await page.getByRole('textbox', { name: 'Add a remark for declining' }).fill(counterofferVendorbid.C_offerRemark);
   await page.getByLabel('Want to negotiate on the').getByRole('button', { name: 'Place Modified Bid' }).click();
   // In case of 'Bid not found' error, retry once
-  if (await page.locator('div').filter({ hasText: 'Bid not found' }).nth(3).waitFor({ state: "visible", timeout: 5000 }).catch(() => true)) {
-    await page.reload();
-    await page.waitForTimeout(3000);
-    await page.getByRole('gridcell', { name: '₹ 20 /KG icon: arrow-right ₹' }).click();
+  if (await page.locator('div').filter({ hasText: 'Bid not found' }).nth(3).waitFor({ state: "visible", timeout: 5000 }).catch(() => false)) {
+  await page.reload();
+  await page.waitForTimeout(3000);
+  await page.getByRole('button', { name: 'Decline' }).click();
+  await page.getByRole('button', { name: 'Modify counter offer' }).click();
+  await page.getByRole('gridcell', { name: '₹ 20 /KG icon: arrow-right ₹' }).click();
   await page.locator('input[type="text"]').fill(counterofferVendorbid.C_offerModify);
   await page.locator('input[type="text"]').press("Enter");
   await page.getByRole('button', { name: 'Place Modified Bid' }).first().waitFor({ state: "visible", timeout: 10000 });
@@ -544,10 +546,9 @@ const lessThanBest_offer_vendor = async ({ page }) => {
   await page.locator('input[type="text"]').press("Enter");
   await page.getByRole('button', { name: 'Revise Quote' }).first().click();
   // In case of 'Bid not found' error, retry once
-  if (await page.locator('div').filter({ hasText: 'Bid not found' }).nth(3).waitFor({ state: "visible", timeout: 5000 }).catch(() => true)) {
+  if (await page.locator('div').filter({ hasText: 'Bid not found' }).nth(3).waitFor({ state: "visible", timeout: 5000 }).catch(() => false)) {
     await page.reload();
     await page.waitForTimeout(3000);
-    // await page.getByRole('gridcell', { name: '₹ 30 /KG' }).waitFor({ state: "visible", timeout: 10000 });
     await page.getByRole('gridcell', { name: '₹ 30 /KG' }).dblclick();
     await page.locator('input[type="text"]').fill("25");
     await page.locator('input[type="text"]').press("Enter");
