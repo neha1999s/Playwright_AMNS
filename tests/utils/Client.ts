@@ -133,7 +133,8 @@ for (let i = 0; i < buttons.length; i++) {
     await addEvaluatorBtn.click();
     await evaluatorOption.dblclick(); 
   } 
-  if (i === 1) {
+  
+  else if (i === 1) {
     await page.locator('[data-test-id="virtuoso-scroller"]').hover();
     await page.mouse.wheel(0,600);
     await page.waitForTimeout(800);
@@ -143,8 +144,6 @@ for (let i = 0; i < buttons.length; i++) {
     await evaluatorOption.dblclick();
     break;
   }
-  // await evaluatorOption.waitFor({ state: 'visible', timeout: 30000 });   
-  // await evaluatorOption.dblclick();
 }
  console.log("Evaluators added");
 
@@ -168,7 +167,7 @@ for (let i = 0; i < buttons.length; i++) {
  const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
 
  try {
-   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
  } catch {
   // Retry if not visible
    await searchInput.clear();
@@ -181,16 +180,13 @@ await vendorOption.click();
 
  await page.getByRole('button', { name: 'Publish' }).click();
  await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
-//  const loader = page.locator('.ant-spin-dot').first();
-//  await loader.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}); 
-//  await loader.waitFor({ state: 'hidden', timeout: 50000 });
 
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
     fmessage:  "Project creation failed" + title
   })
-};
+}
 
 const qa_event_vendorwise = async ({ page  , eventCreation_detail}) => {
  const epochSeconds = Math.floor(Date.now() / 1000);
@@ -239,7 +235,7 @@ for (let i = 0; i < buttons.length; i++) {
  const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
 
  try {
-   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
  } catch {
   // Retry if not visible
    await searchInput.clear();
@@ -252,15 +248,13 @@ await vendorOption.click();
 
  await page.getByRole('button', { name: 'Publish' }).click();
  await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
-//   const loader = page.locator('.ant-spin-dot').first();
-//  await loader.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}); 
-//  await loader.waitFor({ state: 'hidden', timeout: 50000 });
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
     fmessage:  "Project creation failed" + title
   })
-};
+}
+
 
 const qa_event_lineitem = async ({ page , eventCreation_detail}) => {
  const epochSeconds = Math.floor(Date.now() / 1000);
@@ -298,8 +292,7 @@ for (let i = 0; i < buttons.length; i++) {
     await evaluatorOption.dblclick();
     break;
   }
-  // await evaluatorOption.waitFor({ state: 'visible', timeout: 30000 });   
-  // await evaluatorOption.dblclick();
+
 }
  console.log("Evaluators added");
  
@@ -320,7 +313,7 @@ for (let i = 0; i < buttons.length; i++) {
  const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
 
  try {
-   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
  } catch {
   // Retry if not visible
    await searchInput.clear();
@@ -332,9 +325,7 @@ for (let i = 0; i < buttons.length; i++) {
 await vendorOption.click();
 await page.getByRole('button', { name: 'Publish' }).click(); 
 await page.getByLabel(title).getByRole('button', { name: 'Publish' }).click();
-//  const loader = page.locator('.ant-spin-dot').first();
-//  await loader.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}); 
-//  await loader.waitFor({ state: 'hidden', timeout: 50000 });
+
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -400,7 +391,7 @@ for (let i = 0; i < buttons.length; i++) {
  const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
 
  try {
-   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
  } catch {
   // Retry if not visible
    await searchInput.clear();
@@ -412,9 +403,7 @@ for (let i = 0; i < buttons.length; i++) {
  await vendorOption.click();
  await page.getByRole('button', { name: 'Publish' }).click(); 
  await page.getByLabel(title).getByRole('button', { name: 'Publish' }).dblclick();
-//  const loader = page.locator('.ant-spin-dot').first();
-//  await loader.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}); 
-//  await loader.waitFor({ state: 'hidden', timeout: 50000 });
+
  await validateAndLog({
     locator: page.locator('div').filter({ hasText: 'Project created successfully' }).nth(3),
     smessage: "Project created successfully with title: " + title,
@@ -449,7 +438,7 @@ for (let i = 0; i < buttons.length; i++) {
     await page.locator('[data-test-id="virtuoso-scroller"]').hover();
     await page.mouse.wheel(0,600);
     await page.waitForTimeout(800);
-    await addEvaluatorBtn1.waitFor({ state: 'visible', timeout: 20000 });
+    await addEvaluatorBtn1.waitFor({ state: 'visible', timeout: 30000 });
     await page.waitForTimeout(1000);
     await addEvaluatorBtn1.click();
     await evaluatorOption.dblclick();
@@ -476,7 +465,7 @@ for (let i = 0; i < buttons.length; i++) {
  const vendorOption = page.getByRole("menuitem", { name: new RegExp(`Company - ${eventCreation_detail.search_vendor}`) });
 
  try {
-   await vendorOption.waitFor({ state: 'visible', timeout: 20000 });
+   await vendorOption.waitFor({ state: 'visible', timeout: 5000 });
  } catch {
   // Retry if not visible
    await searchInput.clear();
@@ -490,9 +479,6 @@ await vendorOption.click();
  await page.getByRole('textbox', { name: 'Enter the title of the project' }).clear();
  await page.getByRole('button', { name: 'Publish' }).click();
  await page.getByLabel('Publish Event').getByRole('button', { name: 'Publish' }).click();
-//  const loader = page.locator('.ant-spin-dot').first();
-//  await loader.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {}); 
-//  await loader.waitFor({ state: 'hidden', timeout: 50000 });
 
  await validateAndLog({
     locator: page.getByText('Please fill project title!'),
@@ -506,6 +492,7 @@ const surrogate_bid_tech = async ({ page }) => {
   var [ RFX_id , title ] = await eventCreationAPI();
   await page.waitForTimeout(2000);
   if (!RFX_id  || !title) throw new Error('Missing RFX ID or title');
+  await page.getByRole('textbox', { name: 'Search Title' }).waitFor({ state: 'visible', timeout: 30000 });
   await page.getByRole('textbox', { name: 'Search Title' }).click();
   await page.getByRole('textbox', { name: 'Search Title' }).fill(RFX_id)
   await page.getByRole('textbox', { name: 'Search Title' }).press("Enter");
