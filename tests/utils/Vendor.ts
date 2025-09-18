@@ -547,6 +547,7 @@ const lessThanBest_offer_vendor = async ({ page }) => {
   await page.locator('input[type="text"]').fill("25");
   await page.locator('input[type="text"]').press("Enter");
   await page.getByRole('button', { name: 'Revise Quote' }).first().waitFor({ state: "visible", timeout: 5000 });
+  await page.waitForTimeout(2000);
   await page.getByRole('button', { name: 'Revise Quote' }).first().dblclick();
   // In case of 'Bid not found' error, retry once
 if (await page.getByText('Bid not found').isVisible()) {
