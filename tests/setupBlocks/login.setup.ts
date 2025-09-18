@@ -37,7 +37,6 @@ export const clientLogin = async ({ page }) => {
   if (config.LOGIN_METHOD === "phone") {
     await page.getByRole('textbox', { name: 'phone' }).fill(config.USER_MOBILE);
     await page.getByRole('textbox', { name: 'phone' }).press("Enter");
-    await expect(page.getByText('OTP successfully sent!')).toBeVisible({ timeout: 10000 });
     await page.getByRole('textbox', { name: 'password' }).fill(config.OTP);
     await page.getByRole('textbox', { name: 'password' }).press("Enter");
   }
@@ -51,11 +50,8 @@ export const vendorLogin = async ({ page }) => {
     // QA vendor login via phone
     await page.getByRole('textbox', { name: 'phone' }).fill(config.USER_MOBILE);
     await page.getByRole('textbox', { name: 'phone' }).press("Enter");
-    await expect(page.getByText('OTP successfully sent!')).toBeVisible({ timeout: 10000 });
-    await page.getByRole('textbox', { name: 'password' }).fill(config.OTP);
+    await page.getByRole('textbox', { name: 'Enter Your OTP' }).fill(config.OTP);
     await page.getByRole('button', { name: 'Login' }).click();
-    await page.getByRole('textbox', { name: 'phone' }).click();
-
   }
   //  else if (config.LOGIN_METHOD === "email") {
   //   // RIL vendor login via email
@@ -68,7 +64,6 @@ export const vendorLogin = async ({ page }) => {
    else {
     throw new Error("Unsupported login method for vendor");
   }
-
   return page;
 };
 

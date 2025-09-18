@@ -735,7 +735,21 @@ const convertToCBDAuction = async ({ page }) => {
     fmessage:  "RFQ sent to Auction Team failed" 
 })
 }
-
+ const auctionDraft = async ({ page1 }) => {
+  await convertToCBDAuction({ page });
+  await page1.waitForTimeout(2000);
+  await page1.getByRole('tab', { name: 'Auction' }).click();
+  await page1.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
+  await page1.getByRole('menuitem', { name: 'Cancel Event' }).click();
+  await page1.getByRole('textbox', { name: 'Enter reason' }).click();
+  await page1.getByRole('textbox', { name: 'Enter reason' }).fill('abc');
+  await page1.getByRole('button', { name: 'Yes' }).click();
+await validateAndLog({
+    locator: page1.getByText('Order withdrawn'),
+    smessage: "RFQ sent to Auction Team successfully ",
+    fmessage:  "RFQ sent to Auction Team failed" 
+  })
+}
 const split_lot = async ({ page }) => {
   // Search & open event
   await page.getByRole('textbox', { name: 'Search Title' }).press("Enter");
@@ -744,4 +758,4 @@ const split_lot = async ({ page }) => {
   await page.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
   
 }
-export { convertToAuction ,convertToCBDAuction ,counter_offer, best_offers , price_cap_Client , qa_event_type_Auction , publish_event_with_blank_title, pr_tech_RFQ_API,pr_tech_RFQ_By_UI, pr_tech_auction , surrogate_bid_tech, surrogate_bid_RFQ, qa_event_vendorwise , qa_event_lineitem, test ,split_lot  };
+export { auctionDraft ,convertToAuction ,convertToCBDAuction ,counter_offer, best_offers , price_cap_Client , qa_event_type_Auction , publish_event_with_blank_title, pr_tech_RFQ_API,pr_tech_RFQ_By_UI, pr_tech_auction , surrogate_bid_tech, surrogate_bid_RFQ, qa_event_vendorwise , qa_event_lineitem, test ,split_lot  };
