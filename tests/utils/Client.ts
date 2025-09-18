@@ -275,7 +275,7 @@ let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" 
 for (let i = 0; i < buttons.length; i++) {
   // Re-query button fresh each iteration
   const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
-  const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" });
+  // const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" }).nth(1);
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
   if (i === 0) {
     await addEvaluatorBtn.waitFor({ state: 'visible', timeout: 20000 }); 
@@ -286,9 +286,9 @@ for (let i = 0; i < buttons.length; i++) {
     await page.locator('[data-test-id="virtuoso-scroller"]').hover();
     await page.mouse.wheel(0,600);
     await page.waitForTimeout(800);
-    await addEvaluatorBtn1.waitFor({ state: 'visible', timeout: 20000 });
+    await addEvaluatorBtn.waitFor({ state: 'visible', timeout: 20000 });
     await page.waitForTimeout(1000);
-    await addEvaluatorBtn1.click();
+    await addEvaluatorBtn.click();
     await evaluatorOption.dblclick();
     break;
   }
@@ -351,7 +351,7 @@ let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" 
 for (let i = 0; i < buttons.length; i++) {
   // Re-query button fresh each iteration
   const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
-  const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" });
+  // const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
   if (i === 0) {
     await addEvaluatorBtn.waitFor({ state: 'visible', timeout: 20000 }); 
@@ -362,9 +362,9 @@ for (let i = 0; i < buttons.length; i++) {
     await page.locator('[data-test-id="virtuoso-scroller"]').hover();
     await page.mouse.wheel(0,600);
     await page.waitForTimeout(800);
-    await addEvaluatorBtn1.waitFor({ state: 'visible', timeout: 20000 });
+    await addEvaluatorBtn.waitFor({ state: 'visible', timeout: 20000 });
     await page.waitForTimeout(1000);
-    await addEvaluatorBtn1.click();
+    await addEvaluatorBtn.click();
     await evaluatorOption.dblclick();
     break;
   }

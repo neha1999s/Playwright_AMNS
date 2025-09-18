@@ -14,32 +14,30 @@ const vendor_bid_tech = async ({ page }) => {
   await page.getByRole('tab', { name: 'Technical Stage' }).waitFor({ state: "visible", timeout: 10000 });
   await page.getByRole('tab', { name: 'Technical Stage' }).click();
   await page.waitForTimeout(2000);
-//  Quick Fill (done twice)
- for (let i = 0; i < 2; i++) {
-  let count = 0;
 
-  while (!(await page.getByText('Same as RequestedRegret Item').isVisible()) && count < 5) {
+ //  Quick Fill (done twice)
+ for (let i = 0; i < 2; i++) {
+  // let count = 0;
+
+  // while (!(await page.getByText('Same as RequestedRegret Item').isVisible()) && count < 7) {
     await page.getByText('Quick Fill').nth(i).click();  
     await page.waitForTimeout(500);
-    count++;
-  }
+  //   count++;
+  // }
+  
   try {
     await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: 'visible', timeout: 3000 });
     await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
-    await page.waitForTimeout(500);
-  }catch{
-    console.log("Menu item 'Same as Requested' not found");
-  let count = 0;
-
-  while (!(await page.getByText('Same as RequestedRegret Item').isVisible()) && count < 5) {
-    await page.getByText('Quick Fill').nth(1).click();  
-    await page.waitForTimeout(500);
-    count++;
+    await page.waitForTimeout(1000);
   }
+  catch{
+    console.log("Menu item 'Same as Requested' not found");
+    await page.getByText('Quick Fill').nth(1).click();
     await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
   }
-  }
-  await page.getByRole('button', { name: 'Submit' }).nth(1).click();
+  await page.waitForTimeout(1000);
+}
+  await page.getByRole('button', { name: 'Submit' }).nth(1).dblclick();
   await page.waitForTimeout(500);
 
 await validateAndLog({
@@ -62,38 +60,39 @@ const vendor_bid_tech_priceCap = async ({ page }) => {
   await page.waitForTimeout(2000);
  //  Quick Fill (done twice)
  for (let i = 0; i < 2; i++) {
-  let count = 0;
+  // let count = 0;
 
-  while (!(await page.getByText('Same as RequestedRegret Item').isVisible()) && count < 5) {
+  // while (!(await page.getByText('Same as RequestedRegret Item').isVisible()) && count < 7) {
     await page.getByText('Quick Fill').nth(i).click();  
     await page.waitForTimeout(500);
-    count++;
-  }
+  //   count++;
+  // }
   
   try {
     await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: 'visible', timeout: 3000 });
-    await page.getByRole('menuitem', { name: 'Same as Requested' }).dblclick();
-    await page.waitForTimeout(500);
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
+    await page.waitForTimeout(1000);
   }
   catch{
     console.log("Menu item 'Same as Requested' not found");
-    await page.getByText('Quick Fill').nth(i).click();
-    await page.getByRole('menuitem', { name: 'Same as Requested' }).dblclick();
+    await page.getByText('Quick Fill').nth(1).click();
+    await page.getByRole('menuitem', { name: 'Same as Requested' }).click();
   }
+  await page.waitForTimeout(1000);
 }
 
-let a = 0;
-while (!(await page.getByText('Response submitted').isVisible()) && a < 2) {
-    if (await page.getByRole('button', { name: 'Submit' }).nth(1).isDisabled()) {
-    await page.getByText('Quick Fill').first().click();
-    await page.getByRole('menuitem', { name: 'Same as Requested' }).dblclick();
-    await page.getByText('Quick Fill').nth(1).click();
-    await page.getByRole('menuitem', { name: 'Same as Requested' }).dblclick();
-  }
-    await page.getByRole('button', { name: 'Submit' }).nth(1).click();
+// let a = 0;
+// while (!(await page.getByText('Response submitted').isVisible()) && a < 2) {
+    await page.getByRole('button', { name: 'Submit' }).nth(1).dblclick();
     await page.waitForTimeout(500);
-  a++;
-}
+//   a++;
+// }
+  // if (await page.getByRole('button', { name: 'Submit' }).nth(1).isDisabled()) {
+  //   await page.getByText('Quick Fill').first().click();
+  //   await page.getByRole('menuitem', { name: 'Same as Requested' }).dblclick();
+  //   await page.getByText('Quick Fill').nth(1).click();
+  //   await page.getByRole('menuitem', { name: 'Same as Requested' }).dblclick();
+  // }
 await validateAndLog({
   locator: page.getByRole('tab', { name: 'Technical Stage Submitted' }),
   smessage: "Technical Stage Submitted successfully ",
@@ -264,13 +263,13 @@ const vendor_bid_tech_regret = async ({ page }) => {
   await page.waitForTimeout(2000);
    //  Quick Fill (done twice)
  for (let i = 0; i < 2; i++) {
-  let count = 0;
+  // let count = 0;
 
-  while (!(await page.getByText('Same as RequestedRegret Item').isVisible()) && count < 5) {
+  // while (!(await page.getByText('Same as RequestedRegret Item').isVisible()) && count < 5) {
     await page.getByText('Quick Fill').nth(i).click();  
     await page.waitForTimeout(500);
-    count++;
-  }
+  //   count++;
+  // }
   try {
   if (i === 0) {
     await page.getByRole('menuitem', { name: 'Same as Requested' }).waitFor({ state: 'visible', timeout: 3000 });
@@ -291,7 +290,7 @@ const vendor_bid_tech_regret = async ({ page }) => {
 }
 }
   await page.getByRole('button', { name: 'Submit' }).nth(1).dblclick();
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(500);
 
   await validateAndLog({
     locator: page.getByRole("tab", { name: "Technical Stage Submitted" }),
@@ -373,8 +372,11 @@ for (let [field, config] of Object.entries(mandatoryGlobalField)) {
 
 const vendor_bid_rfq_non_regret = async ({ page  , inline_non_regrets , mandatoryGlobalField}) => {
   await page.getByRole('tab', { name: 'RFQ' }).click();
+  await page.waitForTimeout(2000);
   await page.getByRole('radio', { name: 'Indian Rupees (INR)' }).click();
   await page.getByRole('button', { name: 'Save' }).click();
+  await page.waitForTimeout(2000);
+
   await page.locator('div[role="grid"]').first().waitFor({ state: "visible", timeout: 10000 });
 
 for (let i = 0; i < inline_non_regrets.length; i++) {
