@@ -58,11 +58,11 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await surrogate_bid_RFQ({ page:clientPage , rate:rates , linegst:lineGST , deliverytime:delivery  , mandatoryglobalfield:mandatoryglobalFields});
   });
 
-  // test("Price cap set before vendor bid in RFQ @TC009 , @Regression ", async ({ clientPage  }) => {
-  //   await clientLogin({ page: clientPage });
-  //   await clientPage.getByRole('menuitem', { name: 'Events' }).click();
-  //   await price_cap_Client({ page:clientPage  , p_cap: priceCap});
-  // });
+  test("Price cap set before vendor bid in RFQ @TC009 , @Regression ", async ({ clientPage  }) => {
+    await clientLogin({ page: clientPage });
+    await clientPage.getByRole('menuitem', { name: 'Events' }).click();
+    await price_cap_Client({ page:clientPage  , p_cap: priceCap});
+  });
   
   test(" Sent Counter offer from Client Side @TC0010 , @Regression", async ({ clientPage   }) => {
     await clientLogin({ page: clientPage });
@@ -70,11 +70,11 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await counter_offer({ page:clientPage , countOffer :counteroffer});
   });
 
-  // test("Sent Best Offer from Client Side @TC0011, @Regression", async ({ clientPage  }) => {  
-  //   await clientLogin({ page: clientPage });
-  //   await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
-  //   await best_offers({ page: clientPage });
-  // });
+  test("Sent Best Offer from Client Side @TC0011, @Regression", async ({ clientPage  }) => {  
+    await clientLogin({ page: clientPage });
+    await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
+    await best_offers({ page: clientPage });
+  });
 
   test(" Convert to Auction Client Side @TC0012 , @Regression", async ({ clientPage }) => { 
     await clientLogin({ page: clientPage });
