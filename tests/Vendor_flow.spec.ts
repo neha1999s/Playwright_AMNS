@@ -46,15 +46,15 @@ test.describe("Vendor Login & Flow, @Smoke , @Regression", () => {
     await counter_offer_vendor2({ page: vendorPage, counterofferVendorbid:counterofferVendor });
   });
 
-  // test("Counter offer Modify Vendor Side @TC0020,  @Regression", async ({ vendorPage }) => {
-  //   await vendorLogin({ page: vendorPage });
-  //   await counter_offer_vendor3({ page: vendorPage, counterofferVendorbid: counterofferVendor});
-  // });
+  test("Counter offer Modify Vendor Side @TC0020,  @Regression", async ({ vendorPage }) => {
+    await vendorLogin({ page: vendorPage });
+    await counter_offer_vendor3({ page: vendorPage, counterofferVendorbid: counterofferVendor});
+  });
 
-  // test("Best offer (Less than rate) Vendor Side @TC0021, @Smoke , @Regression", async ({ vendorPage }) => { 
-  //   await vendorLogin({ page: vendorPage });
-  //   await lessThanBest_offer_vendor({ page: vendorPage });
-  // });
+  test("Best offer (Less than rate) Vendor Side @TC0021, @Smoke , @Regression", async ({ vendorPage }) => { 
+    await vendorLogin({ page: vendorPage });
+    await lessThanBest_offer_vendor({ page: vendorPage });
+  });
   
   test("Best offer (More than rate) Vendor Side @TC0022, @Smoke , @Regression", async ({ vendorPage }) => { 
     await vendorLogin({ page: vendorPage });

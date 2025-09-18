@@ -505,12 +505,12 @@ const counter_offer_vendor3 = async ({ page , counterofferVendorbid}) => {
   await page.getByRole('gridcell', { name: '₹ 20 /KG icon: arrow-right ₹' }).click();
   await page.locator('input[type="text"]').fill(counterofferVendorbid.C_offerModify);
   await page.locator('input[type="text"]').press("Enter");
-  await page.getByRole('button', { name: 'Place Modified Bid' }).first().waitFor({ state: "visible", timeout: 10000 });
+  await page.getByRole('button', { name: 'Place Modified Bid' }).first().waitFor({ state: "visible", timeout: 5000 });
   await page.getByRole('button', { name: 'Place Modified Bid' }).first().dblclick();
   await page.getByRole('textbox', { name: 'Add a remark for declining' }).fill(counterofferVendorbid.C_offerRemark);
-  await page.getByLabel('Want to negotiate on the').getByRole('button', { name: 'Place Modified Bid' }).click();
+  await page.getByLabel('Want to negotiate on the').getByRole('button', { name: 'Place Modified Bid' }).dblclick();
   // In case of 'Bid not found' error, retry once
-  if (await page.locator('div').filter({ hasText: 'Bid not found' }).nth(3).waitFor({ state: "visible", timeout: 5000 }).catch(() => false)) {
+  if (await page.getByText('Bid not found').isVisible()) {
   await page.reload();
   await page.waitForTimeout(3000);
   await page.getByRole('button', { name: 'Decline' }).click();
@@ -538,22 +538,32 @@ const lessThanBest_offer_vendor = async ({ page }) => {
   await page.getByRole('textbox', { name: 'Search title or Ref-Id' }).fill(RFX_id );
   await page.getByLabel('icon: search').locator('svg').dblclick();
   await page.getByText(title).first().click();
-  // await page.getByRole('tab', { name: 'RFQ' }).waitFor({ state: "visible", timeout: 10000 });
   await page.getByRole('tab', { name: 'RFQ' }).click();
   await page.waitForTimeout(3000);
   await page.getByRole('gridcell', { name: '₹ 30 /KG' }).dblclick();
   await page.locator('input[type="text"]').fill("25");
   await page.locator('input[type="text"]').press("Enter");
-  await page.getByRole('button', { name: 'Revise Quote' }).first().click();
+  await page.getByRole('button', { name: 'Revise Quote' }).first().waitFor({ state: "visible", timeout: 5000 });
+  await page.getByRole('button', { name: 'Revise Quote' }).first().dblclick();
   // In case of 'Bid not found' error, retry once
-  if (await page.locator('div').filter({ hasText: 'Bid not found' }).nth(3).waitFor({ state: "visible", timeout: 5000 }).catch(() => false)) {
-    await page.reload();
-    await page.waitForTimeout(3000);
-    await page.getByRole('gridcell', { name: '₹ 30 /KG' }).dblclick();
-    await page.locator('input[type="text"]').fill("25");
-    await page.locator('input[type="text"]').press("Enter");
-    await page.getByRole('button', { name: 'Revise Quote' }).first().click();
+const bidNotFoundVisible = await page
+  .getByText('Bid not found')
+  .first()
+  .waitFor({ state: "visible", timeout: 2000 })
+  .then(() => true)
+  .catch(() => false);
+
+ if (bidNotFoundVisible) {
+  console.log("⚠️ Bid not found detected. Retrying...");
+  await page.reload();
+  await page.waitForTimeout(3000);
+
+  await page.getByRole('gridcell', { name: '₹ 30 /KG' }).dblclick();
+  await page.locator('input[type="text"]').fill("25");
+  await page.locator('input[type="text"]').press("Enter");
+  await page.getByRole('button', { name: 'Revise Quote' }).first().click();
   }
+
     await validateAndLog({
     locator: page.getByText('Bid revised successfully!'),
     smessage: "Best offer  bid sent to Vendor successfully ",

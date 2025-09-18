@@ -6,76 +6,14 @@ import { test, expect } from '@playwright/test';
 
 const BASE_URL=`https://${ACTIVE_BACKEND}.ag-ri.in/api/`;
 
-export async function clearfilter() {
-  const fetch = (await import('node-fetch')).default;
-  const headers = await login(USERS.intake_member, USERS.OTP);// Add necessary content type
-  let data;
-  for (let i = 1; i <= 4; i++) {
-    switch (i) {
-      case 1:
-        data = {
-          applied_filters: {},
-          item_type: "IntakeRequest",
-          index: 0
-        };
-        break;
-
-      case 2:
-        data = {
-          applied_order_by: [],
-          item_type: "IntakeRequest",
-          index: 0
-        };
-        break;
-
-      case 3:
-        data = {
-          applied_group: ['default'],
-          item_type: "IntakeRequest",
-          index: 0
-        };
-        break;
-
-      case 4:
-        data = {
-          columns: {
-            identifier: { order: 0, hidden: false },
-            ref_id: { order: 1, hidden: false },
-            title: { order: 2, hidden: false },
-            user_identifier: { order: 3, hidden: false },
-            requester_name: { order: 4, hidden: false },
-            status: { order: 8, hidden: false },
-            intake_request_conditions: { order: 9, hidden: false },
-            created_at: { order: 10002, hidden: false },
-            updated_at: { order: 10003, hidden: false }
-          },
-          item_type: "IntakeRequest",
-          index: 0
-        };
-        break;
-    }
-
-    const response = await fetch(`${BASE_URL}/user_preferences`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(data)
-    });
-
-    if (!response.ok) {
-      const body = await response.text();
-      throw new Error(`❌ API RESET FAILED at step ${i} — Status: ${response.status}, Body: ${body}`);
-    }
-  }
-}
-
 // PR search
 export async function fetch_prs() {
  // var headers = await login(USERS.intake_member,USERS.OTP);
   const clientUser = USERS("client");
+  const fetch = (await import('node-fetch')).default;
   const headers = await login(clientUser.USER_MOBILE, clientUser.OTP);
   const url =
     `${BASE_URL}/purchase_requests?page=9`;
-  const fetch = (await import('node-fetch')).default;
    try {
     const res = await fetch(url, { method: 'GET', headers });
     if (res.status !== 200) {
@@ -92,8 +30,9 @@ export async function fetch_prs() {
   
 export async function eventCreationAPI () {
   const clientUser = USERS("client");
+  const fetch = (await import('node-fetch')).default;
   const headers = await login(clientUser.USER_MOBILE, clientUser.OTP);
-  const url = `${BASE_URL}products/search?query=ab`;      // GET call
+  const url = `${BASE_URL}products/search?query=ab`;     // GET call
 
   // Get call for search products
   try {
@@ -2025,9 +1964,11 @@ export async function eventCreationAPI () {
 
 export async function vendorBidAPI() {
    const vendorUser = USERS("vendor");
+   const fetch = (await import('node-fetch')).default;
    const headers = await login2(vendorUser.USER_MOBILE, vendorUser.OTP);
    var [RFX_id , title , event_uuid]= await eventCreationAPI();
-    const url1=`${BASE_URL}event_groups/${event_uuid}`;// GET call
+   const url1=`${BASE_URL}event_groups/${event_uuid}`;// GET call
+    
     try {
       // First: Perform GET request
       const response1 = await fetch(url1, { method: 'GET', headers });
@@ -2838,6 +2779,7 @@ export async function vendorBidAPI() {
 export async function sendCounterOfferAPI(){
   var [RFX_id , title ,tech_uuid, rfq_uuid]  = await vendorBidAPI();
   const clientUser = USERS("client");
+  const fetch = (await import('node-fetch')).default;
   const headers = await login(clientUser.USER_MOBILE, clientUser.OTP);
        
     const url=`${BASE_URL}v1/trade/${rfq_uuid}/schema?response_type=template&additional_fields=order_details`;// GET call
@@ -4320,7 +4262,6 @@ export async function sendCounterOfferAPI(){
 export async function priceCapBeforeBid(){
   var [RFX_id , title , event_uuid , rfq_uuid]  = await eventCreationAPI();
   const clientUser = USERS("client");
-  
   const headers = await login(clientUser.USER_MOBILE, clientUser.OTP);
   const url =
     `${BASE_URL}v1/trade/${rfq_uuid}/schema?response_type=template&additional_fields=order_details`; 
