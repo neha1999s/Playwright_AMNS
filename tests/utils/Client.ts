@@ -705,7 +705,7 @@ const convertToAuction = async ({ page }) => {
 }) 
   return page;
 }
-/*
+
 const convertToCBDAuction = async ({ page }) => {
  // Search & open event
   var [ RFX_id , title ] =  await vendorBidAPI();;
@@ -737,7 +737,7 @@ const convertToCBDAuction = async ({ page }) => {
     fmessage:  "RFQ sent to Auction Team failed" 
 })
 }
-*/
+
  const cancelAuctionDraft = async ({ page }) => {
   page = await convertToAuction({ page });
   await page.waitForTimeout(2000);
