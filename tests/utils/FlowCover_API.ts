@@ -4316,7 +4316,7 @@ export async function submissionTimeExpireAPI() {
     const end_time = Date.now(); // ms
     const bid_end_time = Math.floor(end_time / 1000); // seconds
     console.log("bid_end_time", bid_end_time);
-    const final_bid_end_time = bid_end_time+4;
+    const final_bid_end_time = bid_end_time+6;
     console.log("final_bid_end_time" , final_bid_end_time)
 
     const payload = JSON.stringify({

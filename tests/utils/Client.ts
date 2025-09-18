@@ -699,7 +699,7 @@ const convertToAuction = async ({ page }) => {
   await page.getByRole('button', { name: 'Send to Auction Team', exact: true }).click();
   await page.waitForTimeout(1000);
     await validateAndLog({
-    locator: page.locator('div').filter({ hasText: 'RFQ sent to Auction Team' }).nth(3),
+    locator: page.getByText('RFQ sent to Auction Team'),
     smessage: "RFQ sent to Auction Team successfully ",
     fmessage:  "RFQ sent to Auction Team failed" 
 }) 
@@ -718,22 +718,19 @@ const convertToCBDAuction = async ({ page }) => {
   await page.getByRole('tab', { name: 'RFQ' }).click();
   await page.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
   await page.getByRole('menuitem', { name: 'Convert to Auction' }).click();
-  // wait for new tab and overwrite page
-  [page] = await Promise.all([
-  page.context().waitForEvent("page"),
-  page.getByRole('button', { name: 'Continue' }).click()
-  ]);
-  await page.waitForLoadState('domcontentloaded');
-  await page.waitForTimeout(3000);
-  await page.getByRole('button', { name: 'Rank on line icon: right' }).click();
-  await page.locator('span').filter({ hasText: 'Dynamic Event Extension' }).getByLabel('').click();
-  await page.getByRole('button', { name: 'Save' }).click();
-  await page.getByRole('button', { name: 'Send to Auction team' }).click();
-  await page.getByRole('button', { name: 'Send to Auction Team', exact: true }).waitFor({ state: 'visible' });
-  await page.getByRole('button', { name: 'Send to Auction Team', exact: true }).click();
-  await page.waitForTimeout(500);
+  const page1Promise = page.waitForEvent('popup');
+  await page.getByRole('button', { name: 'Continue' }).click();
+  const page1 = await page1Promise;
+  await page1.waitForLoadState('domcontentloaded');
+  await page1.waitForTimeout(3000);
+  await page1.getByRole('button', { name: 'Rank on line icon: right' }).click();
+  await page1.locator('span').filter({ hasText: 'Dynamic Event Extension' }).getByLabel('').click();
+  await page1.getByRole('button', { name: 'Save' }).click();
+  await page1.getByRole('button', { name: 'Send to Auction team' }).click();
+  await page1.getByRole('button', { name: 'Send to Auction Team', exact: true }).click();
+  
     await validateAndLog({
-    locator: page.locator('div').filter({ hasText: 'RFQ sent to Auction Team' }).nth(3),
+    locator: page1.getByText('RFQ sent to Auction Team'),
     smessage: "RFQ sent to Auction Team successfully ",
     fmessage:  "RFQ sent to Auction Team failed" 
 })

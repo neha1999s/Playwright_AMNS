@@ -82,11 +82,11 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await convertToAuction({ page: clientPage });
   });
 
-  // test(" Convert to CBD Auction Client Side @TC0013 , @Regression", async ({ clientPage }) => {
-  //   await clientLogin({ page: clientPage });
-  //   await clientPage.getByRole('menuitem', { name: 'Events' }).click();
-  //   await convertToCBDAuction({ page: clientPage });
-  // });
+  test(" Convert to CBD Auction Client Side @TC0013 , @Regression", async ({ clientPage }) => {
+    await clientLogin({ page: clientPage });
+    await clientPage.getByRole('menuitem', { name: 'Events' }).click();
+    await convertToCBDAuction({ page: clientPage });
+  });
 
 });
 
