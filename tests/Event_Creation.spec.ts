@@ -12,18 +12,18 @@ test.beforeEach(async () => {
 
 test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
 
-  // test("Create Event with PR (Tech and Auction) @TC002 , @Regression ", async ({ clientPage  }) => {
-  //   await clientLogin({ page: clientPage });
-  //   await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
-  //   await pr_tech_auction({ page: clientPage  , eventCreation_detail: eventCreation_details });
-  // });
+  test("Create Event with PR (Tech and Auction) @TC002 , @Regression ", async ({ clientPage  }) => {
+    await clientLogin({ page: clientPage });
+    await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
+    await pr_tech_auction({ page: clientPage  , eventCreation_detail: eventCreation_details });
+  });
 
-  // test("Event Creation Vendor Wise Evaluation @TC003 , @Regression ", async ({ clientPage  }) => {
-  //   await clientLogin({ page: clientPage });
-  //   await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
-  //   await pr_tech_RFQ_By_UI({ page: clientPage });
-  //   await qa_event_vendorwise({ page: clientPage , eventCreation_detail: eventCreation_details  });
-  // });
+  test("Event Creation Vendor Wise Evaluation @TC003 , @Regression ", async ({ clientPage  }) => {
+    await clientLogin({ page: clientPage });
+    await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
+    await pr_tech_RFQ_By_UI({ page: clientPage });
+    await qa_event_vendorwise({ page: clientPage , eventCreation_detail: eventCreation_details  });
+  });
 
   test("Event Creation line item wise with event type RFQ @TC004 ,@Regression ", async ({ clientPage  }) => {
     await clientLogin({ page: clientPage });

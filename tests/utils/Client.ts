@@ -126,7 +126,7 @@ let buttons = await page.getByRole("button", { name: "icon: plus Add Evaluator" 
 for (let i = 0; i < buttons.length; i++) {
   // Re-query button fresh each iteration
   const addEvaluatorBtn = page.getByRole("button", { name: "icon: plus Add Evaluator" }).first();
-  const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" }).nth(1);
+  const addEvaluatorBtn1 = page.getByRole("button", { name: "icon: plus Add Evaluator" });
   const evaluatorOption = page.getByRole("menuitem", { name: eventCreation_detail.evaluator });
   if (i === 0) {
     await addEvaluatorBtn.waitFor({ state: 'visible', timeout: 20000 }); 
