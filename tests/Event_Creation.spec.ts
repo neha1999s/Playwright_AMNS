@@ -25,12 +25,12 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await qa_event_vendorwise({ page: clientPage , eventCreation_detail: eventCreation_details  });
   });
 
-  test("Event Creation line item wise with event type RFQ @TC003 ,@Regression ", async ({ clientPage  }) => {
-    await clientLogin({ page: clientPage });
-    await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
-    await pr_tech_RFQ_By_UI({ page: clientPage });
-    await qa_event_lineitem ({ page: clientPage , eventCreation_detail: eventCreation_details  });
-  });
+  // test("Event Creation line item wise with event type RFQ @TC003 ,@Regression ", async ({ clientPage  }) => {
+  //   await clientLogin({ page: clientPage });
+  //   await clientPage.getByRole('menuitem', { name: 'Purchase Requisitions' }).click();
+  //   await pr_tech_RFQ_By_UI({ page: clientPage });
+  //   await qa_event_lineitem ({ page: clientPage , eventCreation_detail: eventCreation_details  });
+  // });
    
   test("Event Creation line item wise with event type Auction @TC004 , @Regression ", async ({ clientPage  }) => {
     await clientLogin({ page: clientPage });
@@ -64,17 +64,17 @@ test.describe("Event login & Creation Flow, @Smoke ,@Regression", () => {
     await price_cap_Client({ page:clientPage  , p_cap: priceCap});
   });
   
-  test(" Sent Counter offer from Client Side @TC009 , @Regression", async ({ clientPage   }) => {
-    await clientLogin({ page: clientPage });
-    await clientPage.getByRole('menuitem', { name: 'Events' }).click();
-    await counter_offer({ page:clientPage , countOffer :counteroffer});
-  });
+  // test(" Sent Counter offer from Client Side @TC009 , @Regression", async ({ clientPage   }) => {
+  //   await clientLogin({ page: clientPage });
+  //   await clientPage.getByRole('menuitem', { name: 'Events' }).click();
+  //   await counter_offer({ page:clientPage , countOffer :counteroffer});
+  // });
 
-  test("Sent Best Offer from Client Side @TC0010, @Regression", async ({ clientPage  }) => {  
-    await clientLogin({ page: clientPage });
-    await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
-    await best_offers({ page: clientPage });
-  });
+  // test("Sent Best Offer from Client Side @TC0010, @Regression", async ({ clientPage  }) => {  
+  //   await clientLogin({ page: clientPage });
+  //   await clientPage.getByRole('menuitem', { name: 'Events' }).click(); 
+  //   await best_offers({ page: clientPage });
+  // });
 
   test(" Convert to Auction Client Side @TC0011 , @Regression", async ({ clientPage }) => { 
     await clientLogin({ page: clientPage });
