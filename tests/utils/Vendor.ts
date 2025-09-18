@@ -161,6 +161,7 @@ for (let [field, config] of Object.entries(mandatoryGlobalField)) {
     await dateCell.click();
   }
 }
+await page.waitForTimeout(2000);
 let a= 0;
     while (await page.getByRole('button', { name: 'Submit Quote' }).first().isEnabled() && a < 2) {
       await page.getByRole('button', { name: 'Submit Quote' }).first().click();

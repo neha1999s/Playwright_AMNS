@@ -689,7 +689,7 @@ const convertToAuction = async ({ page }) => {
   page.context().waitForEvent("page"),
   page.getByRole('button', { name: 'Continue' }).click()
   ]);
-  await page.waitForLoadState('domcontentloaded');
+  await page.waitForLoadState('networkidle');
   await page.waitForTimeout(2000);
   await page.getByRole('button', { name: 'Rank on line icon: right' }).click();
   await page.getByRole('checkbox', { name: 'Enable Cost Breakdown Mode' }).click();
@@ -703,9 +703,9 @@ const convertToAuction = async ({ page }) => {
     smessage: "RFQ sent to Auction Team successfully ",
     fmessage:  "RFQ sent to Auction Team failed" 
 }) 
-
+  return page;
 }
-
+/*
 const convertToCBDAuction = async ({ page }) => {
  // Search & open event
   var [ RFX_id , title ] =  await vendorBidAPI();;
@@ -718,34 +718,38 @@ const convertToCBDAuction = async ({ page }) => {
   await page.getByRole('tab', { name: 'RFQ' }).click();
   await page.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
   await page.getByRole('menuitem', { name: 'Convert to Auction' }).click();
-  const page1Promise = page.waitForEvent('popup');
-  await page.getByRole('button', { name: 'Continue' }).click();
-  const page1 = await page1Promise;
-  await page1.waitForLoadState('domcontentloaded');
-  await page1.waitForTimeout(3000);
-  await page1.getByRole('button', { name: 'Rank on line icon: right' }).click();
-  await page1.locator('span').filter({ hasText: 'Dynamic Event Extension' }).getByLabel('').click();
-  await page1.getByRole('button', { name: 'Save' }).click();
-  await page1.getByRole('button', { name: 'Send to Auction team' }).click();
-  await page1.getByRole('button', { name: 'Send to Auction Team', exact: true }).click();
+  [page] = await Promise.all([
+  page.context().waitForEvent("page"),
+  page.getByRole('button', { name: 'Continue' }).click()
+  ]);
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(3000);
+  await page.getByRole('button', { name: 'Rank on line icon: right' }).click();
+  await page.locator('span').filter({ hasText: 'Dynamic Event Extension' }).getByLabel('').click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await page.getByRole('button', { name: 'Send to Auction team' }).click();
+  await page.waitForTimeout(1000);
+  await page.getByRole('button', { name: 'Send to Auction Team', exact: true }).click();
   
     await validateAndLog({
-    locator: page1.getByText('RFQ sent to Auction Team'),
+    locator: page.getByText('RFQ sent to Auction Team'),
     smessage: "RFQ sent to Auction Team successfully ",
     fmessage:  "RFQ sent to Auction Team failed" 
 })
 }
- const auctionDraft = async ({ page1 }) => {
-  await convertToCBDAuction({ page });
-  await page1.waitForTimeout(2000);
-  await page1.getByRole('tab', { name: 'Auction' }).click();
-  await page1.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
-  await page1.getByRole('menuitem', { name: 'Cancel Event' }).click();
-  await page1.getByRole('textbox', { name: 'Enter reason' }).click();
-  await page1.getByRole('textbox', { name: 'Enter reason' }).fill('abc');
-  await page1.getByRole('button', { name: 'Yes' }).click();
-await validateAndLog({
-    locator: page1.getByText('Order withdrawn'),
+*/
+ const cancelAuctionDraft = async ({ page }) => {
+  page = await convertToAuction({ page });
+  await page.waitForTimeout(2000);
+  await page.getByRole('tab', { name: 'Auction' }).click();
+  await page.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
+  await page.getByRole('menuitem', { name: 'Cancel Event' }).click();
+  await page.getByRole('textbox', { name: 'Enter reason' }).click();
+  await page.getByRole('textbox', { name: 'Enter reason' }).fill('abc');
+  await page.getByRole('button', { name: 'Yes' }).click();
+
+  await validateAndLog({
+    locator: page.getByText('Order withdrawn'),
     smessage: "RFQ sent to Auction Team successfully ",
     fmessage:  "RFQ sent to Auction Team failed" 
   })
@@ -756,6 +760,5 @@ const split_lot = async ({ page }) => {
   await page.getByRole('link', { name: 'first_name-102 last_name-102' }).first().click();
   await page.getByRole('tab', { name: 'RFQ' }).click();
   await page.getByRole('button', { name: 'icon: setting Settings icon:' }).click();
-  
 }
-export { auctionDraft ,convertToAuction ,convertToCBDAuction ,counter_offer, best_offers , price_cap_Client , qa_event_type_Auction , publish_event_with_blank_title, pr_tech_RFQ_API,pr_tech_RFQ_By_UI, pr_tech_auction , surrogate_bid_tech, surrogate_bid_RFQ, qa_event_vendorwise , qa_event_lineitem, test ,split_lot  };
+export { cancelAuctionDraft ,convertToAuction ,convertToCBDAuction ,counter_offer, best_offers , price_cap_Client , qa_event_type_Auction , publish_event_with_blank_title, pr_tech_RFQ_API,pr_tech_RFQ_By_UI, pr_tech_auction , surrogate_bid_tech, surrogate_bid_RFQ, qa_event_vendorwise , qa_event_lineitem, test ,split_lot  };
